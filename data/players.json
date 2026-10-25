@@ -1,0 +1,344 @@
+{
+  "players": {
+    "arg_01": {
+      "id": "arg_01",
+      "name": "El Diez",
+      "team": "team_arg",
+      "role": "FW",
+      "stats": {
+        "velocidad": 88,
+        "control": 95,
+        "pase": 94,
+        "tiro": 92,
+        "defensa": 42
+      },
+      "anims": "res://data/anims/arg_01.json",
+      "sheet": "res://assets/sprites/arg_01_aligned.png",
+      "portrait": "res://assets/sprites/arg_01_portrait.png",
+      "icon": "res://assets/sprites/arg_01_icon.png"
+    },
+    "arg_02": {
+      "id": "arg_02",
+      "name": "El Cósmico",
+      "team": "team_arg",
+      "role": "MF",
+      "stats": {
+        "velocidad": 86,
+        "control": 96,
+        "pase": 93,
+        "tiro": 90,
+        "defensa": 45
+      },
+      "anims": "res://data/anims/arg_02.json",
+      "sheet": "res://assets/sprites/arg_02_aligned.png",
+      "portrait": "res://assets/sprites/arg_02_portrait.png",
+      "icon": "res://assets/sprites/arg_02_icon.png"
+    },
+    "arg_03": {
+      "id": "arg_03",
+      "name": "El Cañonero",
+      "team": "team_arg",
+      "role": "FW",
+      "stats": {
+        "velocidad": 83,
+        "control": 82,
+        "pase": 75,
+        "tiro": 95,
+        "defensa": 50
+      },
+      "anims": "res://data/anims/arg_03.json",
+      "sheet": "res://assets/sprites/arg_03_aligned.png",
+      "portrait": "res://assets/sprites/arg_03_portrait.png",
+      "icon": "res://assets/sprites/arg_03_icon.png"
+    },
+    "arg_04": {
+      "id": "arg_04",
+      "name": "El Motor",
+      "team": "team_arg",
+      "role": "MF",
+      "stats": {
+        "velocidad": 84,
+        "control": 80,
+        "pase": 82,
+        "tiro": 76,
+        "defensa": 85
+      },
+      "anims": "res://data/anims/arg_04.json",
+      "sheet": "res://assets/sprites/arg_04_aligned.png",
+      "portrait": "res://assets/sprites/arg_04_portrait.png",
+      "icon": "res://assets/sprites/arg_04_icon.png"
+    },
+    "bra_01": {
+      "id": "bra_01",
+      "name": "El Mago",
+      "team": "team_bra",
+      "role": "MF",
+      "stats": {
+        "velocidad": 87,
+        "control": 95,
+        "pase": 91,
+        "tiro": 88,
+        "defensa": 40
+      },
+      "anims": "res://data/anims/bra_01.json",
+      "sheet": "res://assets/sprites/bra_01_aligned.png",
+      "portrait": "res://assets/sprites/bra_01_portrait.png",
+      "icon": "res://assets/sprites/bra_01_icon.png"
+    },
+    "bra_02": {
+      "id": "bra_02",
+      "name": "El Fenómeno",
+      "team": "team_bra",
+      "role": "FW",
+      "stats": {
+        "velocidad": 94,
+        "control": 92,
+        "pase": 78,
+        "tiro": 94,
+        "defensa": 38
+      },
+      "anims": "res://data/anims/bra_02.json",
+      "sheet": "res://assets/sprites/bra_02_aligned.png",
+      "portrait": "res://assets/sprites/bra_02_portrait.png",
+      "icon": "res://assets/sprites/bra_02_icon.png"
+    },
+    "bra_03": {
+      "id": "bra_03",
+      "name": "El Rayo",
+      "team": "team_bra",
+      "role": "FW",
+      "stats": {
+        "velocidad": 90,
+        "control": 93,
+        "pase": 85,
+        "tiro": 86,
+        "defensa": 35
+      },
+      "anims": "res://data/anims/bra_03.json",
+      "sheet": "res://assets/sprites/bra_03_aligned.png",
+      "portrait": "res://assets/sprites/bra_03_portrait.png",
+      "icon": "res://assets/sprites/bra_03_icon.png"
+    },
+    "bra_04": {
+      "id": "bra_04",
+      "name": "La Flecha Tropical",
+      "team": "team_bra",
+      "role": "FW",
+      "stats": {
+        "velocidad": 93,
+        "control": 87,
+        "pase": 80,
+        "tiro": 84,
+        "defensa": 42
+      },
+      "anims": "res://data/anims/bra_04.json",
+      "sheet": "res://assets/sprites/bra_04_aligned.png",
+      "portrait": "res://assets/sprites/bra_04_portrait.png",
+      "icon": "res://assets/sprites/bra_04_icon.png"
+    },
+    "ita_01": {
+      "id": "ita_01",
+      "name": "El Maestro",
+      "team": "team_ita",
+      "role": "MF",
+      "stats": {
+        "velocidad": 72,
+        "control": 93,
+        "pase": 96,
+        "tiro": 85,
+        "defensa": 65
+      },
+      "anims": "res://data/anims/ita_01.json",
+      "sheet": "res://assets/sprites/ita_01_aligned.png",
+      "portrait": "res://assets/sprites/ita_01_portrait.png",
+      "icon": "res://assets/sprites/ita_01_icon.png"
+    },
+    "ita_02": {
+      "id": "ita_02",
+      "name": "El Muro",
+      "team": "team_ita",
+      "role": "DF",
+      "stats": {
+        "velocidad": 80,
+        "control": 72,
+        "pase": 74,
+        "tiro": 55,
+        "defensa": 94
+      },
+      "anims": "res://data/anims/ita_02.json",
+      "sheet": "res://assets/sprites/ita_02_aligned.png",
+      "portrait": "res://assets/sprites/ita_02_portrait.png",
+      "icon": "res://assets/sprites/ita_02_icon.png"
+    },
+    "ita_03": {
+      "id": "ita_03",
+      "name": "La Coleta Mágica",
+      "team": "team_ita",
+      "role": "FW",
+      "stats": {
+        "velocidad": 84,
+        "control": 91,
+        "pase": 89,
+        "tiro": 89,
+        "defensa": 40
+      },
+      "anims": "res://data/anims/ita_03.json",
+      "sheet": "res://assets/sprites/ita_03_aligned.png",
+      "portrait": "res://assets/sprites/ita_03_portrait.png",
+      "icon": "res://assets/sprites/ita_03_icon.png"
+    },
+    "star_01": {
+      "id": "star_01",
+      "name": "El Cíborg",
+      "team": "team_star",
+      "role": "FW",
+      "stats": {
+        "velocidad": 91,
+        "control": 82,
+        "pase": 70,
+        "tiro": 95,
+        "defensa": 48
+      },
+      "anims": "res://data/anims/star_01.json",
+      "sheet": "res://assets/sprites/star_01_aligned.png",
+      "portrait": "res://assets/sprites/star_01_portrait.png",
+      "icon": "res://assets/sprites/star_01_icon.png"
+    },
+    "star_02": {
+      "id": "star_02",
+      "name": "El Relámpago",
+      "team": "team_star",
+      "role": "FW",
+      "stats": {
+        "velocidad": 96,
+        "control": 86,
+        "pase": 81,
+        "tiro": 90,
+        "defensa": 39
+      },
+      "anims": "res://data/anims/star_02.json",
+      "sheet": "res://assets/sprites/star_02_aligned.png",
+      "portrait": "res://assets/sprites/star_02_portrait.png",
+      "icon": "res://assets/sprites/star_02_icon.png"
+    },
+    "star_03": {
+      "id": "star_03",
+      "name": "El Comandante",
+      "team": "team_star",
+      "role": "FW",
+      "stats": {
+        "velocidad": 90,
+        "control": 88,
+        "pase": 82,
+        "tiro": 94,
+        "defensa": 44
+      },
+      "anims": "res://data/anims/star_03.json",
+      "sheet": "res://assets/sprites/star_03_aligned.png",
+      "portrait": "res://assets/sprites/star_03_portrait.png",
+      "icon": "res://assets/sprites/star_03_icon.png"
+    },
+    "star_04": {
+      "id": "star_04",
+      "name": "El Coloso",
+      "team": "team_star",
+      "role": "FW",
+      "stats": {
+        "velocidad": 82,
+        "control": 89,
+        "pase": 83,
+        "tiro": 92,
+        "defensa": 52
+      },
+      "anims": "res://data/anims/star_04.json",
+      "sheet": "res://assets/sprites/star_04_aligned.png",
+      "portrait": "res://assets/sprites/star_04_portrait.png",
+      "icon": "res://assets/sprites/star_04_icon.png"
+    },
+    "vet_01": {
+      "id": "vet_01",
+      "name": "El Guante Dorado",
+      "team": "team_vet",
+      "role": "MF",
+      "stats": {
+        "velocidad": 78,
+        "control": 87,
+        "pase": 94,
+        "tiro": 86,
+        "defensa": 68
+      },
+      "anims": "res://data/anims/vet_01.json",
+      "sheet": "res://assets/sprites/vet_01_aligned.png",
+      "portrait": "res://assets/sprites/vet_01_portrait.png",
+      "icon": "res://assets/sprites/vet_01_icon.png"
+    },
+    "vet_02": {
+      "id": "vet_02",
+      "name": "La Furia Rubia",
+      "team": "team_vet",
+      "role": "MF",
+      "stats": {
+        "velocidad": 86,
+        "control": 84,
+        "pase": 85,
+        "tiro": 88,
+        "defensa": 74
+      },
+      "anims": "res://data/anims/vet_02.json",
+      "sheet": "res://assets/sprites/vet_02_aligned.png",
+      "portrait": "res://assets/sprites/vet_02_portrait.png",
+      "icon": "res://assets/sprites/vet_02_icon.png"
+    },
+    "vet_03": {
+      "id": "vet_03",
+      "name": "El Pitbull",
+      "team": "team_vet",
+      "role": "MF",
+      "stats": {
+        "velocidad": 85,
+        "control": 81,
+        "pase": 80,
+        "tiro": 75,
+        "defensa": 90
+      },
+      "anims": "res://data/anims/vet_03.json",
+      "sheet": "res://assets/sprites/vet_03_aligned.png",
+      "portrait": "res://assets/sprites/vet_03_portrait.png",
+      "icon": "res://assets/sprites/vet_03_icon.png"
+    },
+    "leg_01": {
+      "id": "leg_01",
+      "name": "La Melena Dorada",
+      "team": "team_leg",
+      "role": "MF",
+      "stats": {
+        "velocidad": 68,
+        "control": 92,
+        "pase": 92,
+        "tiro": 74,
+        "defensa": 48
+      },
+      "anims": "res://data/anims/leg_01.json",
+      "sheet": "res://assets/sprites/leg_01_aligned.png",
+      "portrait": "res://assets/sprites/leg_01_portrait.png",
+      "icon": "res://assets/sprites/leg_01_icon.png"
+    },
+    "leg_02": {
+      "id": "leg_02",
+      "name": "El Gladiador",
+      "team": "team_leg",
+      "role": "DF",
+      "stats": {
+        "velocidad": 81,
+        "control": 74,
+        "pase": 76,
+        "tiro": 70,
+        "defensa": 92
+      },
+      "anims": "res://data/anims/leg_02.json",
+      "sheet": "res://assets/sprites/leg_02_aligned.png",
+      "portrait": "res://assets/sprites/leg_02_portrait.png",
+      "icon": "res://assets/sprites/leg_02_icon.png"
+    }
+  }
+}

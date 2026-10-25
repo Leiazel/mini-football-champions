@@ -1,0 +1,71 @@
+[gd_scene load_steps=6 format=3 uid="uid://testpitch001"]
+
+[ext_resource type="Script" path="res://scripts/pitch/test_pitch.gd" id="1_pitch"]
+[ext_resource type="Script" path="res://scripts/pitch/pitch_ground.gd" id="2_ground"]
+[ext_resource type="PackedScene" uid="uid://ply000000001" path="res://scenes/player/Player.tscn" id="3_player"]
+[ext_resource type="PackedScene" uid="uid://ball00000001" path="res://scenes/ball/Ball.tscn" id="4_ball"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud"]
+bg_color = Color(0.08, 0.1, 0.12, 0.85)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+
+[node name="TestPitch" type="Node2D"]
+script = ExtResource("1_pitch")
+
+[node name="PitchGround" type="Node2D" parent="."]
+script = ExtResource("2_ground")
+
+[node name="Player" parent="." instance=ExtResource("3_player")]
+position = Vector2(0, 0)
+
+[node name="Ball" parent="." instance=ExtResource("4_ball")]
+position = Vector2(70, 0)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(1.8, 1.8)
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Panel" type="PanelContainer" parent="CanvasLayer"]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 560.0
+offset_bottom = 145.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="LabelTitle" type="Label" parent="CanvasLayer/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.85, 0.45, 1)
+text = "MINI FOOTBALL: TORNEOS (HITO 1)"
+
+[node name="LabelPlayer" type="Label" parent="CanvasLayer/Panel/VBox"]
+layout_mode = 2
+text = "Jugador Activo: -"
+
+[node name="LabelStats" type="Label" parent="CanvasLayer/Panel/VBox"]
+layout_mode = 2
+text = "CONTROL: - | VELOCIDAD: - | TIRO: -"
+
+[node name="LabelBall" type="Label" parent="CanvasLayer/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.25, 1)
+text = "Pelota: LIBRE"
+
+[node name="LabelHelp" type="Label" parent="CanvasLayer/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.75, 0.8, 1)
+theme_override_font_sizes/font_size = 12
+text = "[Flechas / WASD] Moverse  |  [Shift] Correr  |  [Espacio / X] Patear  |  [Tab] Cambiar Jugador  |  [R] Reiniciar"

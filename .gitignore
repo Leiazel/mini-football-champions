@@ -1,0 +1,19 @@
+# Archivos confidenciales e internos
+docs/INTERNO_no_subir.md
+.env
+
+# Godot 4
+.godot/
+*.translation
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+
+# Sistema y backups
+.DS_Store
+Thumbs.db
+*.tmp
