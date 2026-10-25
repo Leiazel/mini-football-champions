@@ -1,0 +1,225 @@
+[gd_scene load_steps=9 format=3 uid="uid://tournmatch0001"]
+
+[ext_resource type="Script" path="res://scripts/tournament/tournament_match.gd" id="1_tourn"]
+[ext_resource type="Script" path="res://scripts/pitch/pitch_ground.gd" id="2_ground"]
+[ext_resource type="PackedScene" uid="uid://goal000000001" path="res://scenes/goal/Goal.tscn" id="3_goal"]
+[ext_resource type="PackedScene" uid="uid://gk00000000001" path="res://scenes/goalkeeper/Goalkeeper.tscn" id="4_gk"]
+[ext_resource type="PackedScene" uid="uid://ply000000001" path="res://scenes/player/Player.tscn" id="5_player"]
+[ext_resource type="PackedScene" uid="uid://ball00000001" path="res://scenes/ball/Ball.tscn" id="6_ball"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud"]
+bg_color = Color(0.04, 0.06, 0.08, 0.92)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 16.0
+content_margin_top = 10.0
+content_margin_right = 16.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
+bg_color = Color(0.06, 0.08, 0.12, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9, 0.75, 0.2, 0.8)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 24.0
+content_margin_top = 20.0
+content_margin_right = 24.0
+content_margin_bottom = 20.0
+
+[node name="TournamentMatch" type="Node2D"]
+script = ExtResource("1_tourn")
+
+[node name="PitchGround" type="Node2D" parent="."]
+script = ExtResource("2_ground")
+
+[node name="GoalLeft" parent="." instance=ExtResource("3_goal")]
+position = Vector2(-800, 0)
+is_right_goal = false
+
+[node name="GoalRight" parent="." instance=ExtResource("3_goal")]
+position = Vector2(800, 0)
+is_right_goal = true
+
+[node name="GoalkeeperLeft" parent="." instance=ExtResource("4_gk")]
+position = Vector2(-720, 0)
+player_id = "gk_02"
+team_id = "team_user"
+goal_center = Vector2(-800, 0)
+patrol_x = -720.0
+
+[node name="GoalkeeperRight" parent="." instance=ExtResource("4_gk")]
+position = Vector2(720, 0)
+player_id = "gk_01"
+team_id = "team_opp"
+goal_center = Vector2(800, 0)
+patrol_x = 720.0
+
+[node name="UserPlayer1" parent="." instance=ExtResource("5_player")]
+position = Vector2(-150, 0)
+player_id = "bra_01"
+team_id = "team_user"
+is_user_controlled = true
+is_ai = false
+target_goal_x = 800.0
+
+[node name="UserPlayer2" parent="." instance=ExtResource("5_player")]
+position = Vector2(-230, -85)
+player_id = "bra_02"
+team_id = "team_user"
+is_user_controlled = false
+is_ai = false
+target_goal_x = 800.0
+
+[node name="RivalPlayer1" parent="." instance=ExtResource("5_player")]
+position = Vector2(150, 20)
+player_id = "star_01"
+team_id = "team_opp"
+is_user_controlled = false
+is_ai = true
+target_goal_x = -800.0
+
+[node name="RivalPlayer2" parent="." instance=ExtResource("5_player")]
+position = Vector2(230, -75)
+player_id = "star_02"
+team_id = "team_opp"
+is_user_controlled = false
+is_ai = true
+target_goal_x = -800.0
+
+[node name="Ball" parent="." instance=ExtResource("6_ball")]
+position = Vector2(0, 0)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(1.5, 1.5)
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Panel" type="PanelContainer" parent="CanvasLayer"]
+offset_left = 20.0
+offset_top = 16.0
+offset_right = 780.0
+offset_bottom = 230.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="LabelRound" type="Label" parent="CanvasLayer/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.25, 1)
+text = "🏆 MODO TORNEO: OCTAVOS DE FINAL (NIVEL 1/6)"
+
+[node name="HBoxScore" type="HBoxContainer" parent="CanvasLayer/Panel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="LabelScore" type="Label" parent="CanvasLayer/Panel/VBox/HBoxScore"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.95, 0.55, 1)
+theme_override_font_sizes/font_size = 18
+text = "SELECCIÓN VERDEAMARELA  0 - 0  LOS DESAFIANTES"
+
+[node name="LabelClock" type="Label" parent="CanvasLayer/Panel/VBox/HBoxScore"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.9)
+theme_override_font_sizes/font_size = 18
+text = "TIEMPO: 01:00"
+
+[node name="LabelPlayer" type="Label" parent="CanvasLayer/Panel/VBox"]
+layout_mode = 2
+text = "Controlando: -"
+
+[node name="LabelStats" type="Label" parent="CanvasLayer/Panel/VBox"]
+layout_mode = 2
+text = "CTRL: - | DEF: - | VEL: - | TIRO: - | PASE: -"
+
+[node name="LabelStatus" type="Label" parent="CanvasLayer/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.85, 1.0, 1)
+text = "Estado: -"
+
+[node name="LabelBall" type="Label" parent="CanvasLayer/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.95, 1)
+text = "Pelota: LIBRE"
+
+[node name="LabelHelp" type="Label" parent="CanvasLayer/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.74, 0.8, 1)
+theme_override_font_sizes/font_size = 12
+text = "[Flechas/WASD] Mover | [Toque X] Pase Dirigido | [Mantener X] Tiro Potente | [Z] Cambiar Jugador"
+
+[node name="GoalBanner" type="Label" parent="CanvasLayer"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -380.0
+offset_top = -60.0
+offset_right = 380.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.88)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_font_sizes/font_size = 48
+text = "¡¡¡ GOOOOOOOL !!!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ModalPanel" type="PanelContainer" parent="CanvasLayer"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -140.0
+offset_right = 320.0
+offset_bottom = 140.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
+
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/ModalPanel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="ModalTitle" type="Label" parent="CanvasLayer/ModalPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 26
+text = "¡VICTORIA Y CLASIFICACIÓN!"
+horizontal_alignment = 1
+
+[node name="ModalMsg" type="Label" parent="CanvasLayer/ModalPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.92, 0.95, 1)
+theme_override_font_sizes/font_size = 15
+text = "Has superado la ronda con éxito."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ModalBtnPrompt" type="Label" parent="CanvasLayer/ModalPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.95, 0.5, 1)
+theme_override_font_sizes/font_size = 14
+text = "[Presioná ESPACIO para avanzar a la Siguiente Ronda]"
+horizontal_alignment = 1

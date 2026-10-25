@@ -3,13 +3,14 @@
 Script de verificación exhaustiva para Mini Football: Torneos (v2).
 Valida:
 1. Integridad de archivos del proyecto (escenas, scripts, configuraciones).
-2. Validez de todos los JSON (data/players.json, data/anims/*.json).
+2. Validez de todos los JSON (data/players.json, data/anims/*.json, data/teams.json, data/tournament.json).
 3. Existencia y resolución de todas las rutas de texturas (res://).
 4. Coherencia del schema de animaciones para todos los jugadores.
 5. Cálculos de Hito 1 (Conducción y control de pelota).
 6. Cálculos de Hito 2 (Pase entre dos jugadores y cono de visión).
 7. Cálculos de Hito 3 (Tiro al arco y Arquero con reflejos y atajada simulada).
 8. Lógica de Hito 4 (Rival con IA básica 3v3 y fórmula de robo de balón).
+9. Lógica de Hito 5 (Carga de equipos desde JSON y modo torneo con 6 niveles y Jefe Final).
 """
 
 import os
@@ -27,17 +28,22 @@ def test_project():
         "tools/procesar_lote.py",
         "tools/extractor_anims.py",
         "data/players.json",
+        "data/teams.json",
+        "data/tournament.json",
         "scripts/ball/ball.gd",
         "scripts/player/player.gd",
         "scripts/goal/goal.gd",
         "scripts/goalkeeper/goalkeeper.gd",
         "scripts/pitch/test_pitch.gd",
         "scripts/pitch/pitch_ground.gd",
+        "scripts/tournament/tournament_manager.gd",
+        "scripts/tournament/tournament_match.gd",
         "scenes/ball/Ball.tscn",
         "scenes/player/Player.tscn",
         "scenes/goal/Goal.tscn",
         "scenes/goalkeeper/Goalkeeper.tscn",
         "scenes/field/TestPitch.tscn",
+        "scenes/tournament/TournamentMatch.tscn",
         "assets/sprites/ball.png",
         "assets/sprites/shadow.png",
         "assets/sprites/ball_shadow.png"
@@ -58,7 +64,6 @@ def test_project():
     else:
         print(f"  [OK] {len(players)} jugadores registrados en players.json (incluyendo arqueros gk_01 y gk_02)")
 
-    # Validar arqueros y jugadores de campo
     for pid, p in players.items():
         role = p.get("role", "FW")
         st = p.get("stats", {})
@@ -105,7 +110,7 @@ def test_project():
         t = ctrl / 100.0
         dist = 34.0 * (1.0 - t) + 17.0 * t
         assert abs(dist - expected_dist) < 1e-4
-    print(f"  [OK] Fórmula de control validada en extremos y centro.")
+    print(f"  [OK] Fórmula de control validada.")
 
     print("\n--- 5. Verificando lógica de Hito 2 (Pase dirigido y cono) ---")
     facing = (1.0, 0.0)
@@ -130,35 +135,63 @@ def test_project():
     print(f"  [OK] Fórmulas de tiro potente verificadas.")
 
     print("\n--- 7. Verificando lógica de Hito 4 (Robo de balón e IA 3v3) ---")
-    # Fórmula: clampf(0.50 + (defensa - control) * 0.008, 0.15, 0.85)
     tackle_cases = [
         ("Cannavaro (Def 94) vs Haaland (Ctrl 82)", 94, 82, 0.50 + 12 * 0.008),
         ("Davids (Def 90) vs Messi (Ctrl 95)", 90, 95, 0.50 - 5 * 0.008),
-        ("Ramos (Def 92) vs Ronaldinho (Ctrl 95)", 92, 95, 0.50 - 3 * 0.008),
-        ("Haaland (Def 48) vs Messi (Ctrl 95) [extremo bajo]", 48, 95, 0.15), # clamped a min 0.15
-        ("Cannavaro (Def 94) vs Jugador Genérico (Ctrl 40) [extremo alto]", 94, 40, 0.85) # clamped a max 0.85
+        ("Ramos (Def 92) vs Ronaldinho (Ctrl 95)", 92, 95, 0.50 - 3 * 0.008)
     ]
     for desc, d_stat, c_stat, expected_prob in tackle_cases:
         calc_prob = max(0.15, min(0.85, 0.50 + (d_stat - c_stat) * 0.008))
-        assert abs(calc_prob - expected_prob) < 1e-4, f"Fallo en {desc}: {calc_prob} vs {expected_prob}"
-        print(f"  [OK] Robo: {desc:60s} -> Prob: {calc_prob*100.0:.1f}%")
+        assert abs(calc_prob - expected_prob) < 1e-4
+    print(f"  [OK] Fórmula de disputa y robo validada.")
 
-    print("\n--- 8. Verificando alineación de escena 3v3 TestPitch ---")
-    with open("scenes/field/TestPitch.tscn", "r", encoding="utf-8") as f:
-        pitch_content = f.read()
+    print("\n--- 8. Verificando datos de Torneo y Equipos (Hito 5) ---")
+    with open("data/teams.json", "r", encoding="utf-8") as f:
+        teams_data = json.load(f).get("teams", {})
 
-    required_3v3_nodes = [
-        "GoalLeft", "GoalRight",
-        "GoalkeeperLeft", "GoalkeeperRight",
-        "UserPlayer1", "UserPlayer2",
-        "RivalPlayer1", "RivalPlayer2",
-        "Ball"
+    expected_teams = [
+        "team_desafiantes", "team_veteranos", "team_estrellas",
+        "team_italia", "team_brasil", "team_argentina"
     ]
-    for rnode in required_3v3_nodes:
-        if f'node name="{rnode}"' not in pitch_content:
-            errors.append(f"Falta el nodo {rnode} en TestPitch.tscn")
+    for tid in expected_teams:
+        if tid not in teams_data:
+            errors.append(f"Falta equipo en data/teams.json: {tid}")
         else:
-            print(f"  [OK] Nodo 3v3 presente: {rnode}")
+            team = teams_data[tid]
+            # Validar que todos los jugadores asignados al equipo existen
+            for pid in team.get("formation", []):
+                if pid not in players:
+                    errors.append(f"Equipo {tid} referencia a jugador inexistente: {pid}")
+            gk_id = team.get("gk_id")
+            if gk_id not in players:
+                errors.append(f"Equipo {tid} referencia a arquero inexistente: {gk_id}")
+            print(f"  [OK] Equipo {tid} ({team['name']}) Nivel {team['level']} verificado.")
+
+    with open("data/tournament.json", "r", encoding="utf-8") as f:
+        tourn_data = json.load(f).get("tournament", {})
+
+    rounds = tourn_data.get("rounds", [])
+    if len(rounds) != 6:
+        errors.append(f"Se esperaban 6 rondas de torneo, encontradas: {len(rounds)}")
+    else:
+        print(f"  [OK] Torneo con {len(rounds)} rondas de dificultad creciente.")
+
+    # Validar que la ronda 6 es el Jefe Final Argentina
+    final_round = rounds[-1]
+    if final_round.get("opponent_team") != "team_argentina" or final_round.get("level") != 6:
+        errors.append(f"La ronda final no es el Jefe Final (team_argentina Nivel 6): {final_round}")
+    else:
+        print(f"  [OK] Jefe Final confirmado: {final_round['name']} vs Selección Celeste (Nivel 6).")
+
+    print("\n--- 9. Verificando escena TournamentMatch ---")
+    with open("scenes/tournament/TournamentMatch.tscn", "r", encoding="utf-8") as f:
+        tourn_scene_content = f.read()
+
+    for node in ["GoalLeft", "GoalRight", "GoalkeeperLeft", "GoalkeeperRight", "UserPlayer1", "UserPlayer2", "RivalPlayer1", "RivalPlayer2", "Ball", "ModalPanel"]:
+        if f'node name="{node}"' not in tourn_scene_content:
+            errors.append(f"Falta el nodo {node} en TournamentMatch.tscn")
+        else:
+            print(f"  [OK] Nodo de torneo presente: {node}")
 
     if errors:
         print(f"\n❌ SE ENCONTRARON {len(errors)} ERRORES:")

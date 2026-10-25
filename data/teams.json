@@ -1,0 +1,58 @@
+{
+  "teams": {
+    "team_desafiantes": {
+      "id": "team_desafiantes",
+      "name": "Los Desafiantes",
+      "level": 1,
+      "color": "#F1C40F",
+      "formation": ["leg_01", "leg_02"],
+      "gk_id": "gk_01",
+      "description": "Equipo de talentos independientes listos para dar la sorpresa."
+    },
+    "team_veteranos": {
+      "id": "team_veteranos",
+      "name": "Clásicos Legendarios",
+      "level": 2,
+      "color": "#E67E22",
+      "formation": ["vet_01", "vet_02"],
+      "gk_id": "gk_02",
+      "description": "Veteranos de mil batallas con excelente visión y juego aéreo."
+    },
+    "team_estrellas": {
+      "id": "team_estrellas",
+      "name": "Estrellas Mundiales",
+      "level": 3,
+      "color": "#3498DB",
+      "formation": ["star_01", "star_02"],
+      "gk_id": "gk_01",
+      "description": "Delantera demoledora con velocidad y definición de élite."
+    },
+    "team_italia": {
+      "id": "team_italia",
+      "name": "Selección Azzurra",
+      "level": 4,
+      "color": "#2980B9",
+      "formation": ["ita_01", "ita_02"],
+      "gk_id": "gk_02",
+      "description": "Defensa férrea y precisión milimétrica en el mediocampo."
+    },
+    "team_brasil": {
+      "id": "team_brasil",
+      "name": "Selección Verdeamarela",
+      "level": 5,
+      "color": "#27AE60",
+      "formation": ["bra_01", "bra_02"],
+      "gk_id": "gk_01",
+      "description": "Fútbol arte, magia en el regate y máxima creatividad ofensiva."
+    },
+    "team_argentina": {
+      "id": "team_argentina",
+      "name": "Selección Celeste de Leyendas",
+      "level": 6,
+      "color": "#5DADE2",
+      "formation": ["arg_01", "arg_03"],
+      "gk_id": "gk_02",
+      "description": "El Jefe Final: potencia descomunal, gambeta cósmica y mística campeona."
+    }
+  }
+}

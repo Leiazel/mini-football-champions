@@ -1,0 +1,53 @@
+{
+  "tournament": {
+    "title": "Torneo Continental Mini Football (v2)",
+    "description": "Avanza enfrentando rivales de dificultad creciente hasta desafiar al Jefe Final.",
+    "match_duration_seconds": 60,
+    "target_score_to_win": 3,
+    "user_default_team": "team_brasil",
+    "rounds": [
+      {
+        "round_number": 1,
+        "name": "Octavos de Final",
+        "opponent_team": "team_desafiantes",
+        "level": 1,
+        "difficulty_modifier": 0.85
+      },
+      {
+        "round_number": 2,
+        "name": "Cuartos de Final",
+        "opponent_team": "team_veteranos",
+        "level": 2,
+        "difficulty_modifier": 0.95
+      },
+      {
+        "round_number": 3,
+        "name": "Semifinal",
+        "opponent_team": "team_estrellas",
+        "level": 3,
+        "difficulty_modifier": 1.05
+      },
+      {
+        "round_number": 4,
+        "name": "Final de Conferencia",
+        "opponent_team": "team_italia",
+        "level": 4,
+        "difficulty_modifier": 1.15
+      },
+      {
+        "round_number": 5,
+        "name": "Gran Final",
+        "opponent_team": "team_brasil",
+        "level": 5,
+        "difficulty_modifier": 1.25
+      },
+      {
+        "round_number": 6,
+        "name": "Duelo Definitivo (Jefe Final)",
+        "opponent_team": "team_argentina",
+        "level": 6,
+        "difficulty_modifier": 1.40
+      }
+    ]
+  }
+}

@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Mini-Football-Torneos"
-run/main_scene="res://scenes/field/TestPitch.tscn"
+run/main_scene="res://scenes/tournament/TournamentMatch.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 run/max_fps=60
 config/icon="res://icon.svg"
