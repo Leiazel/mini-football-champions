@@ -252,3 +252,4 @@ func _update_hud() -> void:
 		label_ball.text = "Pelota: %s" % state_str
 
 	label_help.text = "[Flechas/WASD] Mover | [Toque X] Pase Dirigido | [Mantener X] Tiro Potente | [Z] Cambiar Jugador"
+

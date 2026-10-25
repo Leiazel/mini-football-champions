@@ -223,3 +223,4 @@ theme_override_colors/font_color = Color(0.3, 0.95, 0.5, 1)
 theme_override_font_sizes/font_size = 14
 text = "[Presioná ESPACIO para avanzar a la Siguiente Ronda]"
 horizontal_alignment = 1
+

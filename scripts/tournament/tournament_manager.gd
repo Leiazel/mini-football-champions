@@ -126,3 +126,4 @@ func next_round() -> bool:
 
 func restart_current_round() -> void:
 	start_round(current_round_index)
+
