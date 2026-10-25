@@ -1,12 +1,14 @@
-[gd_scene load_steps=6 format=3 uid="uid://testpitch001"]
+[gd_scene load_steps=8 format=3 uid="uid://testpitch001"]
 
 [ext_resource type="Script" path="res://scripts/pitch/test_pitch.gd" id="1_pitch"]
 [ext_resource type="Script" path="res://scripts/pitch/pitch_ground.gd" id="2_ground"]
-[ext_resource type="PackedScene" uid="uid://ply000000001" path="res://scenes/player/Player.tscn" id="3_player"]
-[ext_resource type="PackedScene" uid="uid://ball00000001" path="res://scenes/ball/Ball.tscn" id="4_ball"]
+[ext_resource type="PackedScene" uid="uid://goal000000001" path="res://scenes/goal/Goal.tscn" id="3_goal"]
+[ext_resource type="PackedScene" uid="uid://gk00000000001" path="res://scenes/goalkeeper/Goalkeeper.tscn" id="4_gk"]
+[ext_resource type="PackedScene" uid="uid://ply000000001" path="res://scenes/player/Player.tscn" id="5_player"]
+[ext_resource type="PackedScene" uid="uid://ball00000001" path="res://scenes/ball/Ball.tscn" id="6_ball"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud"]
-bg_color = Color(0.06, 0.08, 0.1, 0.88)
+bg_color = Color(0.05, 0.07, 0.09, 0.88)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -22,21 +24,28 @@ script = ExtResource("1_pitch")
 [node name="PitchGround" type="Node2D" parent="."]
 script = ExtResource("2_ground")
 
-[node name="Player1" parent="." instance=ExtResource("3_player")]
-position = Vector2(-90, 0)
+[node name="GoalRight" parent="." instance=ExtResource("3_goal")]
+position = Vector2(800, 0)
+
+[node name="Goalkeeper" parent="." instance=ExtResource("4_gk")]
+position = Vector2(730, 0)
+player_id = "gk_01"
+
+[node name="Player1" parent="." instance=ExtResource("5_player")]
+position = Vector2(200, 0)
 player_id = "bra_01"
 is_user_controlled = true
 
-[node name="Player2" parent="." instance=ExtResource("3_player")]
-position = Vector2(130, -60)
+[node name="Player2" parent="." instance=ExtResource("5_player")]
+position = Vector2(360, -70)
 player_id = "bra_02"
 is_user_controlled = false
 
-[node name="Ball" parent="." instance=ExtResource("4_ball")]
-position = Vector2(-40, 0)
+[node name="Ball" parent="." instance=ExtResource("6_ball")]
+position = Vector2(250, 0)
 
 [node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(1.7, 1.7)
+zoom = Vector2(1.65, 1.65)
 position_smoothing_enabled = true
 position_smoothing_speed = 8.0
 
@@ -45,8 +54,8 @@ position_smoothing_speed = 8.0
 [node name="Panel" type="PanelContainer" parent="CanvasLayer"]
 offset_left = 20.0
 offset_top = 20.0
-offset_right = 680.0
-offset_bottom = 175.0
+offset_right = 720.0
+offset_bottom = 205.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
 
 [node name="VBox" type="VBoxContainer" parent="CanvasLayer/Panel"]
@@ -55,8 +64,13 @@ theme_override_constants/separation = 4
 
 [node name="LabelTitle" type="Label" parent="CanvasLayer/Panel/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.3, 0.88, 0.5, 1)
-text = "MINI FOOTBALL: TORNEOS (HITO 2 - PASE ENTRE DOS JUGADORES)"
+theme_override_colors/font_color = Color(0.3, 0.9, 0.5, 1)
+text = "MINI FOOTBALL: TORNEOS (HITO 3 - TIRO AL ARCO Y ARQUERO)"
+
+[node name="LabelScore" type="Label" parent="CanvasLayer/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+text = "MARCADOR: 0 GOLES  |  ATAJADAS DEL ARQUERO: 0"
 
 [node name="LabelPlayer" type="Label" parent="CanvasLayer/Panel/VBox"]
 layout_mode = 2
@@ -64,12 +78,12 @@ text = "Jugador Activo: -"
 
 [node name="LabelStats" type="Label" parent="CanvasLayer/Panel/VBox"]
 layout_mode = 2
-text = "PASE: - | CONTROL: - | VELOCIDAD: - | TIRO: -"
+text = "TIRO: - | PASE: - | CONTROL: - | VELOCIDAD: -"
 
 [node name="LabelPassTarget" type="Label" parent="CanvasLayer/Panel/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.85, 0.25, 1)
-text = "Receptor: -"
+theme_override_colors/font_color = Color(0.3, 0.85, 1.0, 1)
+text = "Tiro / Pase: -"
 
 [node name="LabelBall" type="Label" parent="CanvasLayer/Panel/VBox"]
 layout_mode = 2
@@ -80,4 +94,26 @@ text = "Pelota: LIBRE"
 layout_mode = 2
 theme_override_colors/font_color = Color(0.68, 0.74, 0.8, 1)
 theme_override_font_sizes/font_size = 12
-text = "[Flechas/WASD] Mover | [Toque Corto X] Pase | [Mantener X] Tiro | [Z] Cambiar | [Tab] Equipo"
+text = "[Flechas/WASD] Mover | [Mantener X] TIRO AL ARCO | [Toque Corto X] Pase | [Z] Cambiar | [Tab] Equipo"
+
+[node name="GoalBanner" type="Label" parent="CanvasLayer"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -60.0
+offset_right = 300.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_font_sizes/font_size = 46
+text = "¡¡¡ GOOOOOOOL !!!"
+horizontal_alignment = 1
+vertical_alignment = 1

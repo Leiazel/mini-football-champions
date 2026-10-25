@@ -307,8 +307,18 @@ func _perform_power_kick() -> void:
 		anim_sprite.play("kick")
 
 	var tiro_stat = float(stats.get("tiro", 75))
-	var kick_speed = lerp(540.0, 850.0, clampf(tiro_stat / 100.0, 0.0, 1.0))
-	current_ball.kick(facing_direction, kick_speed, self)
+	var charge_factor = clampf(pass_press_time / 0.65, 0.4, 1.0)
+	var base_speed = lerp(540.0, 880.0, clampf(tiro_stat / 100.0, 0.0, 1.0))
+	var kick_speed = base_speed * (0.8 + 0.35 * charge_factor)
+
+	# Dirección: si mira hacia el arco (derecha), ajusta disparo hacia los postes/esquinas
+	var shot_dir = facing_direction.normalized()
+	if shot_dir.x > 0.2:
+		# Pequeño efecto según hacia dónde se movía en vertical
+		shot_dir.y += clampf(velocity.y * 0.001, -0.3, 0.3)
+		shot_dir = shot_dir.normalized()
+
+	current_ball.kick(shot_dir, kick_speed, self)
 
 func _switch_to_next_teammate() -> void:
 	var teammates = []
@@ -412,3 +422,19 @@ func _draw() -> void:
 			Vector2(-6, -90)
 		])
 		draw_colored_polygon(diam, ring_color)
+
+	# 3. Barra de carga de potencia de tiro
+	if is_charging_action and pass_press_time > 0.08:
+		var max_charge: float = 0.65
+		var pct: float = clampf(pass_press_time / max_charge, 0.0, 1.0)
+		var bar_w: float = 38.0
+		var bar_h: float = 5.0
+		var bar_pos: Vector2 = Vector2(-bar_w / 2.0, -114.0)
+
+		# Fondo negro
+		draw_rect(Rect2(bar_pos, Vector2(bar_w, bar_h)), Color(0.1, 0.1, 0.1, 0.85), true)
+		# Relleno de color verde -> amarillo -> rojo
+		var fill_color = Color(0.2, 0.9, 0.3).lerp(Color(1.0, 0.2, 0.2), pct)
+		draw_rect(Rect2(bar_pos, Vector2(bar_w * pct, bar_h)), fill_color, true)
+		# Borde
+		draw_rect(Rect2(bar_pos, Vector2(bar_w, bar_h)), Color(0.9, 0.9, 0.9, 0.9), false, 1.0)

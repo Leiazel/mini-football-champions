@@ -1,0 +1,36 @@
+[gd_scene load_steps=5 format=3 uid="uid://gk00000000001"]
+
+[ext_resource type="Script" path="res://scripts/goalkeeper/goalkeeper.gd" id="1_gk"]
+[ext_resource type="Texture2D" uid="uid://plshad000001" path="res://assets/sprites/shadow.png" id="2_shadow"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_init"]
+animations = [{
+"frames": [],
+"loop": true,
+"name": &"idle_down",
+"speed": 6.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_feet"]
+radius = 14.0
+height = 28.0
+
+[node name="Goalkeeper" type="CharacterBody2D" groups=["goalkeepers", "players"]]
+collision_layer = 1
+collision_mask = 3
+motion_mode = 1
+script = ExtResource("1_gk")
+
+[node name="Shadow" type="Sprite2D" parent="."]
+position = Vector2(0, -2)
+texture = ExtResource("2_shadow")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -54)
+sprite_frames = SubResource("SpriteFrames_init")
+animation = &"idle_down"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -4)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_feet")

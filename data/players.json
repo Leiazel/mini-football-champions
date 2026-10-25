@@ -339,6 +339,24 @@
       "sheet": "res://assets/sprites/leg_02_aligned.png",
       "portrait": "res://assets/sprites/leg_02_portrait.png",
       "icon": "res://assets/sprites/leg_02_icon.png"
+    },
+    "gk_01": {
+      "id": "gk_01",
+      "name": "El Guardián",
+      "team": "team_opp",
+      "role": "GK",
+      "stats": {
+        "reflejos": 88,
+        "velocidad": 74,
+        "control": 72,
+        "pase": 70,
+        "tiro": 40,
+        "defensa": 92
+      },
+      "anims": "res://data/anims/ita_02.json",
+      "sheet": "res://assets/sprites/ita_02_aligned.png",
+      "portrait": "res://assets/sprites/ita_02_portrait.png",
+      "icon": "res://assets/sprites/ita_02_icon.png"
     }
   }
 }
