@@ -15,6 +15,11 @@ var net_flash_timer: float = 0.0
 @onready var goal_area: Area2D = $GoalArea
 
 func _ready() -> void:
+	if not is_right_goal:
+		$GoalArea.position.x = -abs($GoalArea.position.x)
+		$NetBack.position.x = -abs($NetBack.position.x)
+		$NetTop.position.x = -abs($NetTop.position.x)
+		$NetBottom.position.x = -abs($NetBottom.position.x)
 	goal_area.body_entered.connect(_on_body_entered)
 
 func _process(delta: float) -> void:

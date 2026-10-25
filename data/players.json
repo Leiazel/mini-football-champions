@@ -357,6 +357,24 @@
       "sheet": "res://assets/sprites/ita_02_aligned.png",
       "portrait": "res://assets/sprites/ita_02_portrait.png",
       "icon": "res://assets/sprites/ita_02_icon.png"
+    },
+    "gk_02": {
+      "id": "gk_02",
+      "name": "El Pulpo",
+      "team": "team_user",
+      "role": "GK",
+      "stats": {
+        "reflejos": 87,
+        "velocidad": 72,
+        "control": 70,
+        "pase": 68,
+        "tiro": 35,
+        "defensa": 90
+      },
+      "anims": "res://data/anims/vet_03.json",
+      "sheet": "res://assets/sprites/vet_03_aligned.png",
+      "portrait": "res://assets/sprites/vet_03_portrait.png",
+      "icon": "res://assets/sprites/vet_03_icon.png"
     }
   }
 }

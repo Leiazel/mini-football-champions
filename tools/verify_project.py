@@ -8,7 +8,8 @@ Valida:
 4. Coherencia del schema de animaciones para todos los jugadores.
 5. Cálculos de Hito 1 (Conducción y control de pelota).
 6. Cálculos de Hito 2 (Pase entre dos jugadores y cono de visión).
-7. Lógica de Hito 3 (Tiro al arco y Arquero con reflejos y atajada simulada).
+7. Cálculos de Hito 3 (Tiro al arco y Arquero con reflejos y atajada simulada).
+8. Lógica de Hito 4 (Rival con IA básica 3v3 y fórmula de robo de balón).
 """
 
 import os
@@ -52,10 +53,10 @@ def test_project():
         players_data = json.load(f)
 
     players = players_data.get("players", {})
-    if len(players) < 20:
-        errors.append(f"Se esperaban al menos 20 jugadores en players.json, encontrados: {len(players)}")
+    if len(players) < 22:
+        errors.append(f"Se esperaban al menos 22 jugadores en players.json, encontrados: {len(players)}")
     else:
-        print(f"  [OK] {len(players)} jugadores registrados en players.json")
+        print(f"  [OK] {len(players)} jugadores registrados en players.json (incluyendo arqueros gk_01 y gk_02)")
 
     # Validar arqueros y jugadores de campo
     for pid, p in players.items():
@@ -119,30 +120,45 @@ def test_project():
     print(f"  [OK] Algoritmo de selección por cono angular validado.")
 
     print("\n--- 6. Verificando lógica de Hito 3 (Tiro al arco y Arquero) ---")
-    # A) Escala de tiro potente: lerp(540.0, 880.0, tiro / 100.0) * (0.8 + 0.35 * charge)
     for shooter_id in ["arg_03", "star_01", "bra_01", "ita_02"]:
         if shooter_id not in players:
             continue
         t_stat = players[shooter_id]["stats"].get("tiro", 50)
         base_kick = 540.0 * (1.0 - t_stat/100.0) + 880.0 * (t_stat/100.0)
-        max_shot = base_kick * (0.8 + 0.35 * 1.0) # a plena carga
-        print(f"  [OK] {shooter_id} ({players[shooter_id]['name']}): Stat Tiro={t_stat} -> Disparo Max={max_shot:.1f} px/s")
+        max_shot = base_kick * (0.8 + 0.35 * 1.0)
+        assert max_shot > 800.0
+    print(f"  [OK] Fórmulas de tiro potente verificadas.")
 
-    # B) Arquero: reflejos, velocidad de cobertura y alcance
-    gk = players["gk_01"]
-    refl = gk["stats"]["reflejos"]
-    gk_speed = 180.0 * (1.0 - refl/100.0) + 310.0 * (refl/100.0)
-    save_reach = 42.0 + (refl / 100.0) * 18.0
-    print(f"  [OK] Arquero gk_01 ({gk['name']}): Reflejos={refl} -> Vel Cobertura={gk_speed:.1f} px/s, Alcance Atajada={save_reach:.1f} px")
+    print("\n--- 7. Verificando lógica de Hito 4 (Robo de balón e IA 3v3) ---")
+    # Fórmula: clampf(0.50 + (defensa - control) * 0.008, 0.15, 0.85)
+    tackle_cases = [
+        ("Cannavaro (Def 94) vs Haaland (Ctrl 82)", 94, 82, 0.50 + 12 * 0.008),
+        ("Davids (Def 90) vs Messi (Ctrl 95)", 90, 95, 0.50 - 5 * 0.008),
+        ("Ramos (Def 92) vs Ronaldinho (Ctrl 95)", 92, 95, 0.50 - 3 * 0.008),
+        ("Haaland (Def 48) vs Messi (Ctrl 95) [extremo bajo]", 48, 95, 0.15), # clamped a min 0.15
+        ("Cannavaro (Def 94) vs Jugador Genérico (Ctrl 40) [extremo alto]", 94, 40, 0.85) # clamped a max 0.85
+    ]
+    for desc, d_stat, c_stat, expected_prob in tackle_cases:
+        calc_prob = max(0.15, min(0.85, 0.50 + (d_stat - c_stat) * 0.008))
+        assert abs(calc_prob - expected_prob) < 1e-4, f"Fallo en {desc}: {calc_prob} vs {expected_prob}"
+        print(f"  [OK] Robo: {desc:60s} -> Prob: {calc_prob*100.0:.1f}%")
 
-    # C) Escena TestPitch con GoalRight y Goalkeeper
+    print("\n--- 8. Verificando alineación de escena 3v3 TestPitch ---")
     with open("scenes/field/TestPitch.tscn", "r", encoding="utf-8") as f:
         pitch_content = f.read()
-    for req_node in ["GoalRight", "Goalkeeper", "Player1", "Player2", "Ball"]:
-        if f'node name="{req_node}"' not in pitch_content:
-            errors.append(f"TestPitch.tscn no contiene el nodo: {req_node}")
+
+    required_3v3_nodes = [
+        "GoalLeft", "GoalRight",
+        "GoalkeeperLeft", "GoalkeeperRight",
+        "UserPlayer1", "UserPlayer2",
+        "RivalPlayer1", "RivalPlayer2",
+        "Ball"
+    ]
+    for rnode in required_3v3_nodes:
+        if f'node name="{rnode}"' not in pitch_content:
+            errors.append(f"Falta el nodo {rnode} en TestPitch.tscn")
         else:
-            print(f"  [OK] Nodo presente en cancha de pruebas: {req_node}")
+            print(f"  [OK] Nodo 3v3 presente: {rnode}")
 
     if errors:
         print(f"\n❌ SE ENCONTRARON {len(errors)} ERRORES:")

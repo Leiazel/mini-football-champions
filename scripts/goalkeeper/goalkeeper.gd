@@ -2,6 +2,7 @@ extends CharacterBody2D
 class_name Goalkeeper
 
 @export var player_id: String = "gk_01"
+@export var team_id: String = "team_opp"
 @export var goal_center: Vector2 = Vector2(760, 0)
 @export var goal_half_height: float = 75.0
 @export var patrol_x: float = 720.0
@@ -89,7 +90,7 @@ func _build_sprite_frames(p_data: Dictionary) -> void:
 	anim_sprite.sprite_frames = sf
 	anim_sprite.play("idle_down")
 	anim_sprite.position = Vector2(0, -54)
-	anim_sprite.flip_h = true
+	anim_sprite.flip_h = (patrol_x > 0)
 
 func _physics_process(delta: float) -> void:
 	if not is_instance_valid(ball):
@@ -111,11 +112,11 @@ func _process_guard(delta: float) -> void:
 	if not is_instance_valid(ball):
 		return
 
-	# Calcular posición de tapado sobre la línea del arco
-	# Bisectriz entre el centro del arco y la pelota
 	var to_ball = ball.global_position - goal_center
 	var target_y = 0.0
-	if to_ball.x < -10.0:
+	var is_right_side = (patrol_x > 0)
+
+	if (is_right_side and to_ball.x < -10.0) or (!is_right_side and to_ball.x > 10.0):
 		var slope = to_ball.y / to_ball.x
 		target_y = clampf((patrol_x - goal_center.x) * slope, -goal_half_height, goal_half_height)
 	else:
@@ -124,9 +125,7 @@ func _process_guard(delta: float) -> void:
 	var target_pos = Vector2(patrol_x, target_y)
 	var move_diff = target_pos.y - global_position.y
 
-	# Velocidad según stat reflejos y velocidad
 	var refl = float(stats.get("reflejos", 85))
-	var vel_stat = float(stats.get("velocidad", 75))
 	var max_gk_speed = lerp(180.0, 310.0, clampf(refl / 100.0, 0.0, 1.0))
 
 	if abs(move_diff) > 4.0:
@@ -137,8 +136,9 @@ func _process_guard(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, (patrol_x - global_position.x) * 4.0, 800.0 * delta)
 	move_and_slide()
 
-	# Animación
-	anim_sprite.flip_h = true
+	anim_sprite.flip_h = is_right_side
+	facing_direction = Vector2.LEFT if is_right_side else Vector2.RIGHT
+
 	if abs(velocity.y) > 20.0:
 		if anim_sprite.sprite_frames.has_animation("walk_side"):
 			anim_sprite.play("walk_side")
@@ -148,39 +148,46 @@ func _process_guard(delta: float) -> void:
 		if anim_sprite.sprite_frames.has_animation("idle_down"):
 			anim_sprite.play("idle_down")
 
-	# Detección de tiro hacia el arco para lanzarse
-	if ball.current_state == Ball.State.EN_VUELO and ball.velocity.x > 180.0:
+	# Chequeo de disparo aproximándose
+	var is_ball_threatening = false
+	if ball.current_state == Ball.State.EN_VUELO:
+		if is_right_side and ball.velocity.x > 180.0 and ball.global_position.x < patrol_x + 20.0:
+			is_ball_threatening = true
+		elif !is_right_side and ball.velocity.x < -180.0 and ball.global_position.x > patrol_x - 20.0:
+			is_ball_threatening = true
+
+	if is_ball_threatening:
 		var dist_to_ball = global_position.distance_to(ball.global_position)
-		if dist_to_ball < (130.0 + refl * 0.6) and ball.global_position.x < patrol_x + 20.0:
+		if dist_to_ball < (130.0 + refl * 0.6):
 			_perform_dive()
 
 func _perform_dive() -> void:
 	current_state = GKState.DIVING
 	dive_timer = 0.45
 
-	# Simulación de atajada con rotación y escala (regla de contexto)
+	var is_right_side = (patrol_x > 0)
 	var dive_up = ball.global_position.y < global_position.y
 	var angle = deg_to_rad(-40.0 if dive_up else 40.0)
+	if not is_right_side:
+		angle = -angle
 
 	anim_sprite.rotation = angle
-	anim_sprite.scale = Vector2(1.3, 0.75) # Estiramiento atlético
-	
-	# Impulso físico de atajada hacia la trayectoria
-	var dive_dir = Vector2(-0.3, -1.0 if dive_up else 1.0).normalized()
+	anim_sprite.scale = Vector2(1.3, 0.75)
+
+	var dir_x = -0.3 if is_right_side else 0.3
+	var dive_dir = Vector2(dir_x, -1.0 if dive_up else 1.0).normalized()
 	velocity = dive_dir * 280.0
 
 func _process_diving(delta: float) -> void:
 	dive_timer -= delta
 	move_and_slide()
 
-	# Chequear si intercepta la pelota durante la atajada
 	if is_instance_valid(ball) and ball.current_state == Ball.State.EN_VUELO:
 		var dist = global_position.distance_to(ball.global_position)
 		var refl = float(stats.get("reflejos", 85))
 		var save_reach = 42.0 + (refl / 100.0) * 18.0
 
 		if dist <= save_reach:
-			# Atajada exitosa
 			_on_save_successful()
 			return
 
@@ -205,12 +212,12 @@ func _process_holding(delta: float) -> void:
 func _clear_ball() -> void:
 	has_ball = false
 	current_state = GKState.RECOVERING
-	# Despeje hacia campo rival
-	var clear_dir = Vector2(-1.0, randf_range(-0.5, 0.5)).normalized()
+	var is_right_side = (patrol_x > 0)
+	var dir_x = -1.0 if is_right_side else 1.0
+	var clear_dir = Vector2(dir_x, randf_range(-0.5, 0.5)).normalized()
 	ball.kick(clear_dir, 550.0, self)
 
 func _process_recovering(delta: float) -> void:
-	# Restaurar escala y rotación suavemente
 	anim_sprite.rotation = rotate_toward(anim_sprite.rotation, 0.0, 5.0 * delta)
 	anim_sprite.scale = anim_sprite.scale.move_toward(Vector2.ONE, 2.5 * delta)
 	velocity = velocity.move_toward(Vector2.ZERO, 600.0 * delta)
@@ -226,4 +233,3 @@ func on_ball_possessed(_b: Ball) -> void:
 
 func on_ball_lost(_b: Ball) -> void:
 	has_ball = false
-

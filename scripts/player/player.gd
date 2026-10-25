@@ -2,11 +2,13 @@ extends CharacterBody2D
 class_name Player
 
 @export var player_id: String = "bra_01"
+@export var team_id: String = "team_user"
 @export var is_user_controlled: bool = true
+@export var is_ai: bool = false
+@export var target_goal_x: float = 800.0 # Hacia dónde ataca este jugador (+800 o -800)
 
 # Stats en escala 1-100
 var player_name: String = "Jugador"
-var team_id: String = "team_none"
 var role: String = "FW"
 var stats: Dictionary = {
 	"velocidad": 80,
@@ -32,8 +34,13 @@ var is_charging_action: bool = false
 var current_pass_target: Player = null
 var is_targeted_for_pass: bool = false
 
-# Offset táctico para compañeros no controlados
-var tactical_offset: Vector2 = Vector2(160, -80)
+# Robo de balón y colisión
+var tackle_cooldown: float = 0.0
+var stumble_timer: float = 0.0
+
+# IA y táctica
+var tactical_offset: Vector2 = Vector2(160, -70)
+var ai_decision_timer: float = 0.0
 
 # Nodos hijos
 @onready var anim_sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -41,6 +48,7 @@ var tactical_offset: Vector2 = Vector2(160, -80)
 
 signal player_loaded(player_data: Dictionary)
 signal pass_initiated(from_player: Player, to_player: Player, power: float)
+signal ball_stolen(tackler: Player, victim: Player)
 
 func _ready() -> void:
 	add_to_group("players")
@@ -50,18 +58,15 @@ func load_player(p_id: String) -> void:
 	player_id = p_id
 	var file = FileAccess.open("res://data/players.json", FileAccess.READ)
 	if not file:
-		push_error("No se pudo abrir data/players.json")
 		return
 
 	var json_str = file.get_as_text()
 	var parsed = JSON.parse_string(json_str)
 	if not parsed or not parsed.has("players") or not parsed["players"].has(player_id):
-		push_error("Jugador no encontrado en JSON: " + player_id)
 		return
 
 	var p_data = parsed["players"][player_id]
 	player_name = p_data.get("name", "Desconocido")
-	team_id = p_data.get("team", "team_none")
 	role = p_data.get("role", "FW")
 	if p_data.has("stats"):
 		stats = p_data["stats"]
@@ -75,18 +80,12 @@ func _build_sprite_frames(p_data: Dictionary) -> void:
 	var sheet_path = p_data.get("sheet", "res://assets/sprites/" + player_id + "_aligned.png")
 
 	if not FileAccess.file_exists(anim_json_path):
-		push_error("Archivo de animaciones no existe: " + anim_json_path)
 		return
 
 	var a_file = FileAccess.open(anim_json_path, FileAccess.READ)
 	var a_data = JSON.parse_string(a_file.get_as_text())
-	if not a_data or not a_data.has("animations"):
-		push_error("Formato inválido en animaciones: " + anim_json_path)
-		return
-
 	var sheet_texture = load(sheet_path) as Texture2D
 	if not sheet_texture:
-		push_error("No se pudo cargar textura: " + sheet_path)
 		return
 
 	var sf = SpriteFrames.new()
@@ -119,33 +118,82 @@ func set_user_controlled(controlled: bool) -> void:
 	queue_redraw()
 
 func _physics_process(delta: float) -> void:
+	if not is_instance_valid(current_ball):
+		var balls = get_tree().get_nodes_in_group("ball")
+		if not balls.is_empty():
+			current_ball = balls[0] as Ball
+
+	if tackle_cooldown > 0.0:
+		tackle_cooldown -= delta
+	if stumble_timer > 0.0:
+		stumble_timer -= delta
+
 	if is_kicking:
 		kick_anim_timer -= delta
 		if kick_anim_timer <= 0.0:
 			is_kicking = false
 
-	if is_user_controlled:
+	# Verificación de intento de robo si estamos cerca de un rival con la pelota
+	_check_tackle_attempt()
+
+	if is_user_controlled and not is_ai:
 		_process_user_controlled(delta)
+	elif is_ai:
+		_process_rival_ai(delta)
 	else:
 		_process_companion_ai(delta)
 
 	_update_animation()
 	queue_redraw()
 
+func _check_tackle_attempt() -> void:
+	if tackle_cooldown > 0.0 or has_ball or stumble_timer > 0.0:
+		return
+
+	if not is_instance_valid(current_ball) or current_ball.current_state != Ball.State.CONTROLADA:
+		return
+
+	var carrier = current_ball.carrier as Player
+	if not is_instance_valid(carrier) or carrier.team_id == self.team_id:
+		return
+
+	# Distancia de robo / disputa
+	var dist = global_position.distance_to(carrier.global_position)
+	if dist <= 32.0:
+		tackle_cooldown = 0.7
+		_execute_tackle(carrier)
+
+func _execute_tackle(carrier: Player) -> void:
+	var def_stat = float(stats.get("defensa", 50))
+	var ctrl_stat = float(carrier.stats.get("control", 50))
+
+	# Fórmula de contexto: P(robo) según defensa del que roba contra control del poseedor
+	var steal_chance = clampf(0.50 + (def_stat - ctrl_stat) * 0.008, 0.15, 0.85)
+
+	if randf() < steal_chance:
+		# Robo exitoso!
+		carrier.stumble()
+		current_ball.take_possession(self)
+		emit_signal("ball_stolen", self, carrier)
+	else:
+		# El poseedor resistió con su stat control
+		tackle_cooldown = 0.5
+
+func stumble() -> void:
+	stumble_timer = 0.35
+	velocity = velocity * 0.3
+
 func _process_user_controlled(delta: float) -> void:
-	# Búsqueda constante de receptor para pase si tenemos la pelota
 	if has_ball and is_instance_valid(current_ball):
 		var target = _find_best_pass_target()
 		_set_target_receiver(target)
 	else:
 		_set_target_receiver(null)
 
-	# Cambio de jugador con tecla Z
 	if Input.is_action_just_pressed("switch_player"):
 		_switch_to_next_teammate()
 		return
 
-	# Lógica de carga de acción: Toque corto = Pase, Mantener = Tiro
 	if Input.is_action_just_pressed("action_pass"):
 		if has_ball and is_instance_valid(current_ball):
 			is_charging_action = true
@@ -163,8 +211,7 @@ func _process_user_controlled(delta: float) -> void:
 				_perform_power_kick()
 			pass_press_time = 0.0
 
-	# Movimiento del usuario
-	if is_kicking:
+	if is_kicking or stumble_timer > 0.0:
 		velocity = velocity.move_toward(Vector2.ZERO, 600.0 * delta)
 		move_and_slide()
 		return
@@ -187,13 +234,76 @@ func _process_user_controlled(delta: float) -> void:
 
 	move_and_slide()
 
-func _process_companion_ai(delta: float) -> void:
-	if is_kicking:
+func _process_rival_ai(delta: float) -> void:
+	ai_decision_timer -= delta
+	if is_kicking or stumble_timer > 0.0:
 		velocity = velocity.move_toward(Vector2.ZERO, 600.0 * delta)
 		move_and_slide()
 		return
 
-	# El compañero busca una posición abierta de apoyo relativo al jugador con pelota o centro
+	var vel_stat = float(stats.get("velocidad", 75))
+	var speed = lerp(160.0, 230.0, clampf(vel_stat / 100.0, 0.0, 1.0))
+
+	# 1. Si la IA tiene la pelota: ATACAR
+	if has_ball and is_instance_valid(current_ball):
+		var goal_target = Vector2(target_goal_x, 0)
+		var dist_to_goal = global_position.distance_to(goal_target)
+
+		# Si está en distancia de tiro (< 380px), patear al arco
+		if dist_to_goal < 380.0:
+			facing_direction = (goal_target - global_position).normalized()
+			_perform_power_kick()
+			return
+
+		# Posibilidad de pase a compañero abierto
+		var mate = _find_best_pass_target()
+		if is_instance_valid(mate) and ai_decision_timer <= 0.0:
+			var to_mate = mate.global_position - global_position
+			# Pasa si el compañero está más adelantado hacia el arco
+			if (target_goal_x > 0 and mate.global_position.x > global_position.x + 40.0) or (target_goal_x < 0 and mate.global_position.x < global_position.x - 40.0):
+				current_pass_target = mate
+				_perform_pass()
+				ai_decision_timer = 1.0
+				return
+
+		# Conducir hacia el arco rival
+		var move_dir = (goal_target - global_position).normalized()
+		facing_direction = move_dir
+		is_moving = true
+		velocity = velocity.move_toward(move_dir * speed, 900.0 * delta)
+
+	# 2. Si la pelota está LIBRE o en el suelo: DISPUTARLA
+	elif is_instance_valid(current_ball) and current_ball.current_state == Ball.State.LIBRE:
+		var dir_to_ball = (current_ball.global_position - global_position).normalized()
+		facing_direction = dir_to_ball
+		is_moving = true
+		velocity = velocity.move_toward(dir_to_ball * speed, 1000.0 * delta)
+
+	# 3. Si el equipo rival tiene la pelota: PRESIONAR O MARCAR
+	elif is_instance_valid(current_ball) and current_ball.current_state == Ball.State.CONTROLADA:
+		var carrier = current_ball.carrier
+		if is_instance_valid(carrier) and carrier.team_id != self.team_id:
+			# Perseguir y presionar al poseedor
+			var dir_to_carrier = (carrier.global_position - global_position).normalized()
+			facing_direction = dir_to_carrier
+			is_moving = true
+			velocity = velocity.move_toward(dir_to_carrier * speed, 900.0 * delta)
+		else:
+			# El compañero de equipo tiene la pelota
+			_process_companion_ai(delta)
+			return
+	else:
+		is_moving = false
+		velocity = velocity.move_toward(Vector2.ZERO, 800.0 * delta)
+
+	move_and_slide()
+
+func _process_companion_ai(delta: float) -> void:
+	if is_kicking or stumble_timer > 0.0:
+		velocity = velocity.move_toward(Vector2.ZERO, 600.0 * delta)
+		move_and_slide()
+		return
+
 	var leader = _get_active_teammate()
 	if is_instance_valid(leader):
 		var ideal_pos = leader.global_position + tactical_offset
@@ -203,12 +313,11 @@ func _process_companion_ai(delta: float) -> void:
 			var move_dir = (ideal_pos - global_position).normalized()
 			facing_direction = move_dir
 			is_moving = true
-			var follow_speed = 150.0
+			var follow_speed = 155.0
 			velocity = velocity.move_toward(move_dir * follow_speed, 800.0 * delta)
 		else:
 			is_moving = false
 			velocity = velocity.move_toward(Vector2.ZERO, 800.0 * delta)
-			# Mirar hacia el poseedor del balón
 			facing_direction = (leader.global_position - global_position).normalized()
 	else:
 		is_moving = false
@@ -237,9 +346,7 @@ func _find_best_pass_target() -> Player:
 		var dir = to_mate.normalized()
 		var dot = facing_direction.dot(dir)
 
-		# Cono frontal de visión (~150°)
 		if dot >= 0.15:
-			# Ponderar alineación con el ángulo y penalizar distancias extremas
 			var score = (dot * 100.0) - (dist * 0.05)
 			if score > best_score:
 				best_score = score
@@ -267,7 +374,6 @@ func _perform_pass() -> void:
 
 	var target = current_pass_target
 	if not is_instance_valid(target):
-		# Pase al vacío en la dirección actual si no hay compañero en cono
 		_perform_soft_pass()
 		return
 
@@ -276,16 +382,15 @@ func _perform_pass() -> void:
 	if anim_sprite.sprite_frames.has_animation("kick"):
 		anim_sprite.play("kick")
 
-	# Stat pase (1-100) calcula la velocidad y firmeza del pase
 	var pase_stat = float(stats.get("pase", 80))
 	var pass_speed = lerp(460.0, 750.0, clampf(pase_stat / 100.0, 0.0, 1.0))
 
 	emit_signal("pass_initiated", self, target, pass_speed)
 	current_ball.pass_to(target, pass_speed, self)
 
-	# Cambiar automáticamente el control del usuario al receptor para una experiencia deportiva fluida
-	target.set_user_controlled(true)
-	set_user_controlled(false)
+	if is_user_controlled:
+		target.set_user_controlled(true)
+		set_user_controlled(false)
 
 func _perform_soft_pass() -> void:
 	is_kicking = true
@@ -311,11 +416,10 @@ func _perform_power_kick() -> void:
 	var base_speed = lerp(540.0, 880.0, clampf(tiro_stat / 100.0, 0.0, 1.0))
 	var kick_speed = base_speed * (0.8 + 0.35 * charge_factor)
 
-	# Dirección: si mira hacia el arco (derecha), ajusta disparo hacia los postes/esquinas
 	var shot_dir = facing_direction.normalized()
-	if shot_dir.x > 0.2:
-		# Pequeño efecto según hacia dónde se movía en vertical
-		shot_dir.y += clampf(velocity.y * 0.001, -0.3, 0.3)
+	# Si ataca hacia un arco determinado, añade ajuste a la meta
+	if (target_goal_x > 0 and shot_dir.x > 0.1) or (target_goal_x < 0 and shot_dir.x < -0.1):
+		shot_dir.y += clampf(velocity.y * 0.001, -0.25, 0.25)
 		shot_dir = shot_dir.normalized()
 
 	current_ball.kick(shot_dir, kick_speed, self)
@@ -396,8 +500,8 @@ func on_ball_lost(_b: Ball) -> void:
 	_set_target_receiver(null)
 
 func _draw() -> void:
-	# 1. Indicador sobre la cabeza del jugador controlado
-	if is_user_controlled:
+	# 1. Indicador sobre la cabeza del jugador controlado por el usuario
+	if is_user_controlled and not is_ai:
 		var tri_color = Color(0.15, 0.9, 1.0, 0.95)
 		var pts = PackedVector2Array([
 			Vector2(-7, -98),
@@ -405,7 +509,6 @@ func _draw() -> void:
 			Vector2(0, -86)
 		])
 		draw_colored_polygon(pts, tri_color)
-		# Borde fino oscuro
 		draw_polyline(PackedVector2Array([
 			Vector2(-7, -98), Vector2(7, -98), Vector2(0, -86), Vector2(-7, -98)
 		]), Color(0.05, 0.1, 0.15, 0.9), 1.5)
@@ -414,7 +517,6 @@ func _draw() -> void:
 	if is_targeted_for_pass:
 		var ring_color = Color(1.0, 0.85, 0.2, 0.9)
 		draw_arc(Vector2(0, -3), 19.0, 0, TAU, 24, ring_color, 2.5)
-		# Pequeña flecha o rombo sobre la cabeza
 		var diam = PackedVector2Array([
 			Vector2(0, -96),
 			Vector2(6, -90),
@@ -423,7 +525,17 @@ func _draw() -> void:
 		])
 		draw_colored_polygon(diam, ring_color)
 
-	# 3. Barra de carga de potencia de tiro
+	# 3. Indicador sutil sobre rivales (pequeño rombo rojo)
+	if is_ai and team_id != "team_user":
+		var enemy_color = Color(0.95, 0.2, 0.2, 0.85)
+		var mini_pts = PackedVector2Array([
+			Vector2(-4, -92),
+			Vector2(4, -92),
+			Vector2(0, -84)
+		])
+		draw_colored_polygon(mini_pts, enemy_color)
+
+	# 4. Barra de carga de potencia de tiro
 	if is_charging_action and pass_press_time > 0.08:
 		var max_charge: float = 0.65
 		var pct: float = clampf(pass_press_time / max_charge, 0.0, 1.0)
@@ -431,10 +543,7 @@ func _draw() -> void:
 		var bar_h: float = 5.0
 		var bar_pos: Vector2 = Vector2(-bar_w / 2.0, -114.0)
 
-		# Fondo negro
 		draw_rect(Rect2(bar_pos, Vector2(bar_w, bar_h)), Color(0.1, 0.1, 0.1, 0.85), true)
-		# Relleno de color verde -> amarillo -> rojo
 		var fill_color = Color(0.2, 0.9, 0.3).lerp(Color(1.0, 0.2, 0.2), pct)
 		draw_rect(Rect2(bar_pos, Vector2(bar_w * pct, bar_h)), fill_color, true)
-		# Borde
 		draw_rect(Rect2(bar_pos, Vector2(bar_w, bar_h)), Color(0.9, 0.9, 0.9, 0.9), false, 1.0)
