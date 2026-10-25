@@ -34,3 +34,4 @@ animation = &"idle_down"
 position = Vector2(0, -4)
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_feet")
+

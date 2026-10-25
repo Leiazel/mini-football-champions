@@ -63,3 +63,4 @@ func _draw() -> void:
 	# Travesaño (superior en perspectiva)
 	draw_line(Vector2(0, -half_w), Vector2(depth, -half_w), post_color, 3.0)
 	draw_line(Vector2(0, half_w), Vector2(depth, half_w), post_color, 3.0)
+
