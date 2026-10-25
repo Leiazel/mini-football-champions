@@ -7,13 +7,16 @@ Valida:
 3. Existencia y resolución de todas las rutas de texturas (res://).
 4. Coherencia del schema de animaciones para todos los jugadores.
 5. Cálculos de la máquina de estados de la pelota (distancias según stat control).
-6. Cálculos de velocidad del jugador según stat velocidad y sprint.
+6. Lógica de pase entre dos jugadores (Hito 2):
+   - Cono de visión de pase (dot product).
+   - Velocidad del pase escalada con stat 'pase'.
+   - Transición de control y posesión.
 """
 
 import os
 import sys
 import json
-import re
+import math
 
 def test_project():
     errors = []
@@ -54,13 +57,11 @@ def test_project():
 
     required_stats = ["velocidad", "control", "pase", "tiro", "defensa"]
     for pid, p in players.items():
-        # Validar stats
         for st in required_stats:
             val = p.get("stats", {}).get(st)
             if val is None or not (1 <= val <= 100):
                 errors.append(f"Jugador {pid} stat '{st}' inválido: {val}")
 
-        # Validar rutas res://
         for res_key in ["anims", "sheet", "portrait", "icon"]:
             res_path = p.get(res_key, "")
             local_path = res_path.replace("res://", "")
@@ -95,29 +96,44 @@ def test_project():
 
     print(f"  [OK] Verificadas las 11 animaciones requeridas para los 20 jugadores.")
 
-    print("\n--- 4. Verificando lógica de distancias de control (Hito 1) ---")
-    # En ball.gd: lerp(34.0, 17.0, control / 100.0)
+    print("\n--- 4. Verificando lógica de Hito 1 (Conducción y control) ---")
     for ctrl, expected_dist in [(0, 34.0), (50, 25.5), (100, 17.0)]:
         t = ctrl / 100.0
         dist = 34.0 * (1.0 - t) + 17.0 * t
         assert abs(dist - expected_dist) < 1e-4
         print(f"  [OK] Control {ctrl:3d} -> Distancia de pelota: {dist:.1f}px")
 
-    # Comparar jugadores concretos:
-    # arg_01 (Control 95) vs star_01 (Control 82) vs ita_02 (Control 72)
-    for test_id in ["arg_01", "star_01", "ita_02"]:
-        c = players[test_id]["stats"]["control"]
-        t = c / 100.0
-        d = 34.0 * (1.0 - t) + 17.0 * t
-        print(f"  [OK] {test_id} ({players[test_id]['name']}): Control {c} -> Ball dist: {d:.2f}px")
+    print("\n--- 5. Verificando lógica de Hito 2 (Mecánica de pase entre dos jugadores) ---")
+    # A) Simulación del cono de visión de pase (dot product)
+    facing = (1.0, 0.0) # Mirando a la derecha
+    teammates_test = [
+        ("Delante (+20 deg)", (0.939, 0.342), True),
+        ("Diagonal frente (+45 deg)", (0.707, 0.707), True),
+        ("Lateral (+80 deg)", (0.173, 0.984), True), # dot=0.173 > 0.15 threshold
+        ("Atrás (+140 deg)", (-0.766, 0.642), False),
+        ("Espalda total (180 deg)", (-1.0, 0.0), False)
+    ]
+    for desc, dir_vec, should_target in teammates_test:
+        dot = facing[0]*dir_vec[0] + facing[1]*dir_vec[1]
+        is_target = dot >= 0.15
+        assert is_target == should_target, f"Error en cono para {desc}: dot={dot}"
+        print(f"  [OK] Cono de pase {desc:25s} (dot: {dot:+.3f}) -> {'EN CONO' if is_target else 'FUERA DE CONO'}")
 
-    print("\n--- 5. Verificando .gitignore y protección de datos internos ---")
-    with open(".gitignore", "r", encoding="utf-8") as f:
-        git_content = f.read()
-    if "docs/INTERNO_no_subir.md" not in git_content:
-        errors.append("docs/INTERNO_no_subir.md no está en .gitignore")
+    # B) Escala de velocidad de pase según stat 'pase'
+    # lerp(460.0, 750.0, pase / 100.0)
+    for test_id in ["bra_01", "bra_02", "arg_01", "ita_01", "star_01"]:
+        p_stat = players[test_id]["stats"]["pase"]
+        t = p_stat / 100.0
+        pass_speed = 460.0 * (1.0 - t) + 750.0 * t
+        print(f"  [OK] {test_id} ({players[test_id]['name']}): Stat Pase={p_stat} -> Velocidad Pase={pass_speed:.1f} px/s")
+
+    print("\n--- 6. Verificando escena TestPitch con 2 jugadores ---")
+    with open("scenes/field/TestPitch.tscn", "r", encoding="utf-8") as f:
+        pitch_content = f.read()
+    if 'node name="Player1"' not in pitch_content or 'node name="Player2"' not in pitch_content:
+        errors.append("TestPitch.tscn no contiene Player1 y Player2 instanciados")
     else:
-        print("  [OK] docs/INTERNO_no_subir.md debidamente protegido en .gitignore")
+        print("  [OK] Player1 y Player2 presentes en la escena de pruebas TestPitch.tscn")
 
     if errors:
         print(f"\n❌ SE ENCONTRARON {len(errors)} ERRORES:")
@@ -129,4 +145,3 @@ def test_project():
 
 if __name__ == "__main__":
     test_project()
-

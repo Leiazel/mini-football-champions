@@ -2,6 +2,7 @@ extends CharacterBody2D
 class_name Player
 
 @export var player_id: String = "bra_01"
+@export var is_user_controlled: bool = true
 
 # Stats en escala 1-100
 var player_name: String = "Jugador"
@@ -25,11 +26,21 @@ var kick_anim_timer: float = 0.0
 var has_ball: bool = false
 var current_ball: Ball = null
 
+# Pase e interacción con compañeros
+var pass_press_time: float = 0.0
+var is_charging_action: bool = false
+var current_pass_target: Player = null
+var is_targeted_for_pass: bool = false
+
+# Offset táctico para compañeros no controlados
+var tactical_offset: Vector2 = Vector2(160, -80)
+
 # Nodos hijos
 @onready var anim_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var shadow: Sprite2D = $Shadow
 
 signal player_loaded(player_data: Dictionary)
+signal pass_initiated(from_player: Player, to_player: Player, power: float)
 
 func _ready() -> void:
 	add_to_group("players")
@@ -57,6 +68,7 @@ func load_player(p_id: String) -> void:
 
 	_build_sprite_frames(p_data)
 	emit_signal("player_loaded", p_data)
+	queue_redraw()
 
 func _build_sprite_frames(p_data: Dictionary) -> void:
 	var anim_json_path = p_data.get("anims", "res://data/anims/" + player_id + ".json")
@@ -78,7 +90,6 @@ func _build_sprite_frames(p_data: Dictionary) -> void:
 		return
 
 	var sf = SpriteFrames.new()
-	# Remover animaciones por defecto si existen
 	for existing_anim in sf.get_animation_names():
 		sf.remove_animation(existing_anim)
 
@@ -97,9 +108,15 @@ func _build_sprite_frames(p_data: Dictionary) -> void:
 
 	anim_sprite.sprite_frames = sf
 	anim_sprite.play("idle_down")
-	# El pivot en el sheet está en y=118 de 128 (pies cerca del fondo).
-	# Centramos el nodo del AnimatedSprite para que los pies coincidan con la posición (0, 0)
 	anim_sprite.position = Vector2(0, -54)
+
+func set_user_controlled(controlled: bool) -> void:
+	is_user_controlled = controlled
+	if not is_user_controlled:
+		is_charging_action = false
+		pass_press_time = 0.0
+		_set_target_receiver(null)
+	queue_redraw()
 
 func _physics_process(delta: float) -> void:
 	if is_kicking:
@@ -107,38 +124,48 @@ func _physics_process(delta: float) -> void:
 		if kick_anim_timer <= 0.0:
 			is_kicking = false
 
-	_handle_input()
-	_update_movement(delta)
-	_update_animation()
+	if is_user_controlled:
+		_process_user_controlled(delta)
+	else:
+		_process_companion_ai(delta)
 
-func _handle_input() -> void:
-	if is_kicking:
+	_update_animation()
+	queue_redraw()
+
+func _process_user_controlled(delta: float) -> void:
+	# Búsqueda constante de receptor para pase si tenemos la pelota
+	if has_ball and is_instance_valid(current_ball):
+		var target = _find_best_pass_target()
+		_set_target_receiver(target)
+	else:
+		_set_target_receiver(null)
+
+	# Cambio de jugador con tecla Z
+	if Input.is_action_just_pressed("switch_player"):
+		_switch_to_next_teammate()
 		return
 
-	# Patear / Pasar la pelota
+	# Lógica de carga de acción: Toque corto = Pase, Mantener = Tiro
 	if Input.is_action_just_pressed("action_pass"):
 		if has_ball and is_instance_valid(current_ball):
-			_perform_kick()
+			is_charging_action = true
+			pass_press_time = 0.0
 
-func _perform_kick() -> void:
-	if not has_ball or not is_instance_valid(current_ball):
-		return
+	if is_charging_action:
+		pass_press_time += delta
 
-	is_kicking = true
-	kick_anim_timer = 0.35
-	var kick_dir = facing_direction.normalized()
-	# Potencia influenciada por stat tiro
-	var tiro_stat = float(stats.get("tiro", 75))
-	var kick_speed = lerp(480.0, 780.0, clampf(tiro_stat / 100.0, 0.0, 1.0))
+	if Input.is_action_just_released("action_pass"):
+		if is_charging_action and has_ball and is_instance_valid(current_ball):
+			is_charging_action = false
+			if pass_press_time < 0.28:
+				_perform_pass()
+			else:
+				_perform_power_kick()
+			pass_press_time = 0.0
 
-	if anim_sprite.sprite_frames.has_animation("kick"):
-		anim_sprite.play("kick")
-
-	current_ball.kick(kick_dir, kick_speed, self)
-
-func _update_movement(delta: float) -> void:
+	# Movimiento del usuario
 	if is_kicking:
-		velocity = velocity.move_toward(Vector2.ZERO, 500.0 * delta)
+		velocity = velocity.move_toward(Vector2.ZERO, 600.0 * delta)
 		move_and_slide()
 		return
 
@@ -149,18 +176,156 @@ func _update_movement(delta: float) -> void:
 	if is_moving:
 		facing_direction = input_vec.normalized()
 
-	# Cálculo de velocidad basada en stat 'velocidad'
 	var vel_stat = float(stats.get("velocidad", 75))
 	var base_speed = lerp(160.0, 240.0, clampf(vel_stat / 100.0, 0.0, 1.0))
 	var target_speed = base_speed * (1.35 if is_sprinting else 1.0)
 
 	if is_moving:
-		var target_vel = facing_direction * target_speed
-		velocity = velocity.move_toward(target_vel, 1200.0 * delta)
+		velocity = velocity.move_toward(facing_direction * target_speed, 1200.0 * delta)
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, 1000.0 * delta)
 
 	move_and_slide()
+
+func _process_companion_ai(delta: float) -> void:
+	if is_kicking:
+		velocity = velocity.move_toward(Vector2.ZERO, 600.0 * delta)
+		move_and_slide()
+		return
+
+	# El compañero busca una posición abierta de apoyo relativo al jugador con pelota o centro
+	var leader = _get_active_teammate()
+	if is_instance_valid(leader):
+		var ideal_pos = leader.global_position + tactical_offset
+		var dist_to_ideal = global_position.distance_to(ideal_pos)
+
+		if dist_to_ideal > 35.0:
+			var move_dir = (ideal_pos - global_position).normalized()
+			facing_direction = move_dir
+			is_moving = true
+			var follow_speed = 150.0
+			velocity = velocity.move_toward(move_dir * follow_speed, 800.0 * delta)
+		else:
+			is_moving = false
+			velocity = velocity.move_toward(Vector2.ZERO, 800.0 * delta)
+			# Mirar hacia el poseedor del balón
+			facing_direction = (leader.global_position - global_position).normalized()
+	else:
+		is_moving = false
+		velocity = velocity.move_toward(Vector2.ZERO, 800.0 * delta)
+
+	move_and_slide()
+
+func _find_best_pass_target() -> Player:
+	var teammates = []
+	for p in get_tree().get_nodes_in_group("players"):
+		if p != self and p is Player and p.team_id == self.team_id:
+			teammates.append(p)
+
+	if teammates.is_empty():
+		return null
+
+	var best_target: Player = null
+	var best_score: float = -9999.0
+
+	for mate in teammates:
+		var to_mate = mate.global_position - global_position
+		var dist = to_mate.length()
+		if dist < 40.0 or dist > 850.0:
+			continue
+
+		var dir = to_mate.normalized()
+		var dot = facing_direction.dot(dir)
+
+		# Cono frontal de visión (~150°)
+		if dot >= 0.15:
+			# Ponderar alineación con el ángulo y penalizar distancias extremas
+			var score = (dot * 100.0) - (dist * 0.05)
+			if score > best_score:
+				best_score = score
+				best_target = mate
+
+	return best_target
+
+func _set_target_receiver(target: Player) -> void:
+	if current_pass_target == target:
+		return
+
+	if is_instance_valid(current_pass_target):
+		current_pass_target.is_targeted_for_pass = false
+		current_pass_target.queue_redraw()
+
+	current_pass_target = target
+
+	if is_instance_valid(current_pass_target):
+		current_pass_target.is_targeted_for_pass = true
+		current_pass_target.queue_redraw()
+
+func _perform_pass() -> void:
+	if not has_ball or not is_instance_valid(current_ball):
+		return
+
+	var target = current_pass_target
+	if not is_instance_valid(target):
+		# Pase al vacío en la dirección actual si no hay compañero en cono
+		_perform_soft_pass()
+		return
+
+	is_kicking = true
+	kick_anim_timer = 0.32
+	if anim_sprite.sprite_frames.has_animation("kick"):
+		anim_sprite.play("kick")
+
+	# Stat pase (1-100) calcula la velocidad y firmeza del pase
+	var pase_stat = float(stats.get("pase", 80))
+	var pass_speed = lerp(460.0, 750.0, clampf(pase_stat / 100.0, 0.0, 1.0))
+
+	emit_signal("pass_initiated", self, target, pass_speed)
+	current_ball.pass_to(target, pass_speed, self)
+
+	# Cambiar automáticamente el control del usuario al receptor para una experiencia deportiva fluida
+	target.set_user_controlled(true)
+	set_user_controlled(false)
+
+func _perform_soft_pass() -> void:
+	is_kicking = true
+	kick_anim_timer = 0.3
+	if anim_sprite.sprite_frames.has_animation("kick"):
+		anim_sprite.play("kick")
+
+	var pase_stat = float(stats.get("pase", 75))
+	var pass_speed = lerp(380.0, 580.0, clampf(pase_stat / 100.0, 0.0, 1.0))
+	current_ball.kick(facing_direction, pass_speed, self)
+
+func _perform_power_kick() -> void:
+	if not has_ball or not is_instance_valid(current_ball):
+		return
+
+	is_kicking = true
+	kick_anim_timer = 0.35
+	if anim_sprite.sprite_frames.has_animation("kick"):
+		anim_sprite.play("kick")
+
+	var tiro_stat = float(stats.get("tiro", 75))
+	var kick_speed = lerp(540.0, 850.0, clampf(tiro_stat / 100.0, 0.0, 1.0))
+	current_ball.kick(facing_direction, kick_speed, self)
+
+func _switch_to_next_teammate() -> void:
+	var teammates = []
+	for p in get_tree().get_nodes_in_group("players"):
+		if p != self and p is Player and p.team_id == self.team_id:
+			teammates.append(p)
+
+	if not teammates.is_empty():
+		var next_player = teammates[0]
+		next_player.set_user_controlled(true)
+		set_user_controlled(false)
+
+func _get_active_teammate() -> Player:
+	for p in get_tree().get_nodes_in_group("players"):
+		if p != self and p is Player and p.team_id == self.team_id and p.is_user_controlled:
+			return p
+	return null
 
 func _update_animation() -> void:
 	if is_kicking:
@@ -168,14 +333,12 @@ func _update_animation() -> void:
 
 	var dir_name = _get_direction_name(facing_direction)
 	var flip = facing_direction.x < -0.05
-
 	anim_sprite.flip_h = flip
 
 	var target_anim = "idle_down"
 
 	if is_moving:
 		var prefix = "run_" if is_sprinting else "walk_"
-		# Si no existe walk_* en el schema, fallback a run_*
 		if not anim_sprite.sprite_frames.has_animation(prefix + dir_name):
 			prefix = "run_"
 
@@ -220,4 +383,32 @@ func on_ball_possessed(b: Ball) -> void:
 func on_ball_lost(_b: Ball) -> void:
 	has_ball = false
 	current_ball = null
+	_set_target_receiver(null)
 
+func _draw() -> void:
+	# 1. Indicador sobre la cabeza del jugador controlado
+	if is_user_controlled:
+		var tri_color = Color(0.15, 0.9, 1.0, 0.95)
+		var pts = PackedVector2Array([
+			Vector2(-7, -98),
+			Vector2(7, -98),
+			Vector2(0, -86)
+		])
+		draw_colored_polygon(pts, tri_color)
+		# Borde fino oscuro
+		draw_polyline(PackedVector2Array([
+			Vector2(-7, -98), Vector2(7, -98), Vector2(0, -86), Vector2(-7, -98)
+		]), Color(0.05, 0.1, 0.15, 0.9), 1.5)
+
+	# 2. Indicador sobre el compañero elegido como receptor de pase
+	if is_targeted_for_pass:
+		var ring_color = Color(1.0, 0.85, 0.2, 0.9)
+		draw_arc(Vector2(0, -3), 19.0, 0, TAU, 24, ring_color, 2.5)
+		# Pequeña flecha o rombo sobre la cabeza
+		var diam = PackedVector2Array([
+			Vector2(0, -96),
+			Vector2(6, -90),
+			Vector2(0, -84),
+			Vector2(-6, -90)
+		])
+		draw_colored_polygon(diam, ring_color)
