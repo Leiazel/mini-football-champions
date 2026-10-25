@@ -220,3 +220,4 @@ func on_ball_possessed(b: Ball) -> void:
 func on_ball_lost(_b: Ball) -> void:
 	has_ball = false
 	current_ball = null
+

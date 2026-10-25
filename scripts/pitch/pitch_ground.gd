@@ -46,3 +46,4 @@ func _draw() -> void:
 	var small_h = 220.0
 	draw_rect(Rect2(-half_w, -small_h / 2.0, small_w, small_h), line_color, false, line_width)
 	draw_rect(Rect2(half_w - small_w, -small_h / 2.0, small_w, small_h), line_color, false, line_width)
+

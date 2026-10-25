@@ -131,3 +131,4 @@ func kick(direction: Vector2, power: float, kicker: CharacterBody2D) -> void:
 	current_state = State.EN_VUELO
 	emit_signal("possession_changed", null)
 	emit_signal("state_changed", current_state)
+

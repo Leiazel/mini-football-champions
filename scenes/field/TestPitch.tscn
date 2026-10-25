@@ -69,3 +69,4 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.75, 0.8, 1)
 theme_override_font_sizes/font_size = 12
 text = "[Flechas / WASD] Moverse  |  [Shift] Correr  |  [Espacio / X] Patear  |  [Tab] Cambiar Jugador  |  [R] Reiniciar"
+

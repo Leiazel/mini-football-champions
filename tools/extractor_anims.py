@@ -214,3 +214,4 @@ if __name__ == "__main__":
         res = process_player(pid, sheet_path, "assets/sprites", "data/anims")
         total_anim_frames = sum(len(a["frames"]) for a in res["animations"].values())
         print(f"-> {pid}: {len(res['animations'])} animaciones, {total_anim_frames} frames alineados en 128x128.")
+
