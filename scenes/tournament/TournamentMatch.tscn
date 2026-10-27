@@ -41,64 +41,82 @@ script = ExtResource("1_tourn")
 script = ExtResource("2_ground")
 
 [node name="GoalLeft" parent="." instance=ExtResource("3_goal")]
-position = Vector2(-800, 0)
+position = Vector2(-1200, 0)
 is_right_goal = false
 
 [node name="GoalRight" parent="." instance=ExtResource("3_goal")]
-position = Vector2(800, 0)
+position = Vector2(1200, 0)
 is_right_goal = true
 
 [node name="GoalkeeperLeft" parent="." instance=ExtResource("4_gk")]
-position = Vector2(-720, 0)
-player_id = "gk_02"
+position = Vector2(-1140, 0)
+player_id = "gk_bra"
 team_id = "team_user"
-goal_center = Vector2(-800, 0)
-patrol_x = -720.0
+goal_center = Vector2(-1200, 0)
+goal_half_height = 95.0
+patrol_x = -1140.0
 
 [node name="GoalkeeperRight" parent="." instance=ExtResource("4_gk")]
-position = Vector2(720, 0)
-player_id = "gk_01"
+position = Vector2(1140, 0)
+player_id = "gk_leg"
 team_id = "team_opp"
-goal_center = Vector2(800, 0)
-patrol_x = 720.0
+goal_center = Vector2(1200, 0)
+goal_half_height = 95.0
+patrol_x = 1140.0
 
 [node name="UserPlayer1" parent="." instance=ExtResource("5_player")]
-position = Vector2(-150, 0)
+position = Vector2(-620, 40)
+player_id = "bra_03"
+team_id = "team_user"
+is_user_controlled = false
+is_ai = false
+target_goal_x = 1200.0
+
+[node name="UserPlayer2" parent="." instance=ExtResource("5_player")]
+position = Vector2(-240, -140)
 player_id = "bra_01"
 team_id = "team_user"
 is_user_controlled = true
 is_ai = false
-target_goal_x = 800.0
+target_goal_x = 1200.0
 
-[node name="UserPlayer2" parent="." instance=ExtResource("5_player")]
-position = Vector2(-230, -85)
+[node name="UserPlayer3" parent="." instance=ExtResource("5_player")]
+position = Vector2(-100, 90)
 player_id = "bra_02"
 team_id = "team_user"
 is_user_controlled = false
 is_ai = false
-target_goal_x = 800.0
+target_goal_x = 1200.0
 
 [node name="RivalPlayer1" parent="." instance=ExtResource("5_player")]
-position = Vector2(150, 20)
-player_id = "star_01"
+position = Vector2(620, -40)
+player_id = "leg_02"
 team_id = "team_opp"
 is_user_controlled = false
 is_ai = true
-target_goal_x = -800.0
+target_goal_x = -1200.0
 
 [node name="RivalPlayer2" parent="." instance=ExtResource("5_player")]
-position = Vector2(230, -75)
-player_id = "star_02"
+position = Vector2(240, 140)
+player_id = "leg_01"
 team_id = "team_opp"
 is_user_controlled = false
 is_ai = true
-target_goal_x = -800.0
+target_goal_x = -1200.0
+
+[node name="RivalPlayer3" parent="." instance=ExtResource("5_player")]
+position = Vector2(130, -90)
+player_id = "bra_04"
+team_id = "team_opp"
+is_user_controlled = false
+is_ai = true
+target_goal_x = -1200.0
 
 [node name="Ball" parent="." instance=ExtResource("6_ball")]
 position = Vector2(0, 0)
 
 [node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(1.5, 1.5)
+zoom = Vector2(0.76, 0.76)
 position_smoothing_enabled = true
 position_smoothing_speed = 8.0
 
@@ -107,7 +125,7 @@ position_smoothing_speed = 8.0
 [node name="Panel" type="PanelContainer" parent="CanvasLayer"]
 offset_left = 20.0
 offset_top = 16.0
-offset_right = 780.0
+offset_right = 790.0
 offset_bottom = 230.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
 
@@ -158,7 +176,7 @@ text = "Pelota: LIBRE"
 layout_mode = 2
 theme_override_colors/font_color = Color(0.68, 0.74, 0.8, 1)
 theme_override_font_sizes/font_size = 12
-text = "[Flechas/WASD] Mover | [Toque X] Pase Dirigido | [Mantener X] Tiro Potente | [Z] Cambiar Jugador"
+text = "[Flechas/WASD] Mover | [Toque X/Espacio] Pase | [Mantener X/Espacio] Tiro | [Z/Q] Cambiar Jugador"
 
 [node name="GoalBanner" type="Label" parent="CanvasLayer"]
 visible = false
@@ -223,4 +241,3 @@ theme_override_colors/font_color = Color(0.3, 0.95, 0.5, 1)
 theme_override_font_sizes/font_size = 14
 text = "[Presioná ESPACIO para avanzar a la Siguiente Ronda]"
 horizontal_alignment = 1
-

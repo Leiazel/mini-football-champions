@@ -1,6 +1,8 @@
 extends Node
 class_name TournamentManager
 
+static var selected_user_team_id: String = "team_brasil"
+
 signal round_started(round_data: Dictionary, user_team: Dictionary, opp_team: Dictionary)
 signal score_updated(user_score: int, opp_score: int)
 signal match_ended(user_won: bool, is_champion: bool)
@@ -21,6 +23,7 @@ var is_champion: bool = false
 
 func _init() -> void:
 	load_data()
+	user_team_id = selected_user_team_id
 
 func load_data() -> void:
 	# 1. Cargar teams.json

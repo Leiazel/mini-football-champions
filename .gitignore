@@ -5,6 +5,12 @@ docs/INTERNO_no_subir.md
 # Godot 4
 .godot/
 *.translation
+*.import
+assets/**/*.import
+
+# Gitignore propio
+.gitignore
+
 
 # Python
 __pycache__/
@@ -17,4 +23,11 @@ venv/
 .DS_Store
 Thumbs.db
 *.tmp
+
+# Binarios locales y ejecutables
+bin/
+*.x86_64
+jugar.sh
+*.desktop
+
 

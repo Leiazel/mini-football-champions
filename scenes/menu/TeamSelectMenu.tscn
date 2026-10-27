@@ -1,0 +1,728 @@
+[gd_scene load_steps=12 format=3 uid="uid://teamselect0001"]
+
+[ext_resource type="Script" path="res://scripts/menu/team_select_menu.gd" id="1_menu"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_banner"]
+bg_color = Color(0.66, 0.11, 0.14, 0.4)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.83, 0.7, 0.55, 0.6)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 14.0
+content_margin_top = 3.0
+content_margin_right = 14.0
+content_margin_bottom = 3.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_subbar"]
+bg_color = Color(0.1, 0.04, 0.05, 0.75)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.83, 0.7, 0.55, 0.2)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pitch"]
+bg_color = Color(0.08, 0.28, 0.14, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.83, 0.7, 0.55, 0.4)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.12, 0.04, 0.05, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.83, 0.7, 0.55, 0.8)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_badge_role"]
+bg_color = Color(0.08, 0.03, 0.04, 0.88)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.83, 0.7, 0.55, 0.5)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_badge_ovr"]
+bg_color = Color(0.77, 0.13, 0.18, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.96, 0.93, 0.86, 0.9)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+content_margin_left = 6.0
+content_margin_top = 2.0
+content_margin_right = 6.0
+content_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_info"]
+bg_color = Color(0.1, 0.04, 0.05, 0.88)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.83, 0.7, 0.55, 0.3)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+content_margin_left = 18.0
+content_margin_top = 16.0
+content_margin_right = 18.0
+content_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_play"]
+bg_color = Color(0.77, 0.13, 0.18, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.96, 0.93, 0.86, 0.9)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+content_margin_left = 28.0
+content_margin_top = 10.0
+content_margin_right = 28.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_random"]
+bg_color = Color(0.96, 0.93, 0.86, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.77, 0.63, 0.35, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_prac"]
+bg_color = Color(0.14, 0.06, 0.07, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.83, 0.7, 0.55, 0.45)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+
+[node name="TeamSelectMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Background" type="ColorRect" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.05, 0.02, 0.03, 1)
+
+[node name="Root" type="VBoxContainer" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 14.0
+offset_right = -24.0
+offset_bottom = -14.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="HeaderBox" type="VBoxContainer" parent="CanvasLayer/Root"]
+layout_mode = 2
+alignment = 1
+
+[node name="PillContainer" type="HBoxContainer" parent="CanvasLayer/Root/HeaderBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="BannerPill" type="PanelContainer" parent="CanvasLayer/Root/HeaderBox/PillContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_banner")
+
+[node name="LabelBanner" type="Label" parent="CanvasLayer/Root/HeaderBox/PillContainer/BannerPill"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.93, 0.86, 1)
+theme_override_font_sizes/font_size = 11
+text = "★ EDICIÓN DE LUJO · RED & BEIGE ★"
+
+[node name="LabelTitle" type="Label" parent="CanvasLayer/Root/HeaderBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.95, 0.88, 1)
+theme_override_font_sizes/font_size = 28
+text = "ULTIMATE DRAFT"
+horizontal_alignment = 1
+
+[node name="LabelSubtitle" type="Label" parent="CanvasLayer/Root/HeaderBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.7, 0.55, 0.85)
+theme_override_font_sizes/font_size = 13
+text = "Selecciona y alinea tu escuadra legendaria para disputar el torneo"
+horizontal_alignment = 1
+
+[node name="TeamSelectorBar" type="PanelContainer" parent="CanvasLayer/Root/HeaderBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_subbar")
+
+[node name="Scroll" type="ScrollContainer" parent="CanvasLayer/Root/HeaderBox/TeamSelectorBar"]
+layout_mode = 2
+horizontal_scroll_mode = 1
+vertical_scroll_mode = 0
+
+[node name="BtnContainer" type="HBoxContainer" parent="CanvasLayer/Root/HeaderBox/TeamSelectorBar/Scroll"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="ContentBox" type="HBoxContainer" parent="CanvasLayer/Root"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="PitchWrapper" type="PanelContainer" parent="CanvasLayer/Root/ContentBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.6
+theme_override_styles/panel = SubResource("StyleBoxFlat_pitch")
+
+[node name="TacticalPitch" type="Control" parent="CanvasLayer/Root/ContentBox/PitchWrapper"]
+layout_mode = 2
+
+[node name="LineCenter" type="ColorRect" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch"]
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_right = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.92, 0.95, 0.92, 0.25)
+
+[node name="AreaLeft" type="ReferenceRect" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch"]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_top = 70.0
+offset_right = 140.0
+offset_bottom = -70.0
+grow_vertical = 2
+border_color = Color(0.92, 0.95, 0.92, 0.25)
+border_width = 2.0
+editor_only = false
+
+[node name="CardGK" type="PanelContainer" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch"]
+custom_minimum_size = Vector2(130, 195)
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 20.0
+offset_top = -97.0
+offset_right = 150.0
+offset_bottom = 98.0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardGK"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="PhotoContainer" type="Control" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardGK/VBox"]
+custom_minimum_size = Vector2(118, 120)
+layout_mode = 2
+
+[node name="Photo" type="TextureRect" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardGK/VBox/PhotoContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TopBadges" type="HBoxContainer" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardGK/VBox/PhotoContainer"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = 26.0
+grow_horizontal = 2
+
+[node name="LabelRole" type="Label" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardGK/VBox/PhotoContainer/TopBadges"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.93, 0.86, 1)
+theme_override_font_sizes/font_size = 10
+theme_override_styles/normal = SubResource("StyleBoxFlat_badge_role")
+text = "POR"
+
+[node name="Spacer" type="Control" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardGK/VBox/PhotoContainer/TopBadges"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LabelOVR" type="Label" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardGK/VBox/PhotoContainer/TopBadges"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleBoxFlat_badge_ovr")
+text = "88"
+
+[node name="Plate" type="VBoxContainer" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardGK/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="LabelSlot" type="Label" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardGK/VBox/Plate"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.7, 0.55, 0.7)
+theme_override_font_sizes/font_size = 9
+text = "ARQUERO"
+horizontal_alignment = 1
+
+[node name="LabelName" type="Label" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardGK/VBox/Plate"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.93, 0.86, 1)
+theme_override_font_sizes/font_size = 11
+text = "EL GUARDIÁN"
+horizontal_alignment = 1
+text_overrun_behavior = 3
+
+[node name="LabelStats" type="Label" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardGK/VBox/Plate"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.7, 0.55, 0.9)
+theme_override_font_sizes/font_size = 9
+text = "REF 88 · DEF 92"
+horizontal_alignment = 1
+
+[node name="CardP1" type="PanelContainer" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch"]
+custom_minimum_size = Vector2(130, 195)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -165.0
+offset_top = -145.0
+offset_right = -35.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP1"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="PhotoContainer" type="Control" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP1/VBox"]
+custom_minimum_size = Vector2(118, 120)
+layout_mode = 2
+
+[node name="Photo" type="TextureRect" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP1/VBox/PhotoContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TopBadges" type="HBoxContainer" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP1/VBox/PhotoContainer"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = 26.0
+grow_horizontal = 2
+
+[node name="LabelRole" type="Label" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP1/VBox/PhotoContainer/TopBadges"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.93, 0.86, 1)
+theme_override_font_sizes/font_size = 10
+theme_override_styles/normal = SubResource("StyleBoxFlat_badge_role")
+text = "DF"
+
+[node name="Spacer" type="Control" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP1/VBox/PhotoContainer/TopBadges"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LabelOVR" type="Label" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP1/VBox/PhotoContainer/TopBadges"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleBoxFlat_badge_ovr")
+text = "90"
+
+[node name="Plate" type="VBoxContainer" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP1/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="LabelSlot" type="Label" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP1/VBox/Plate"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.7, 0.55, 0.7)
+theme_override_font_sizes/font_size = 9
+text = "DEFENSOR"
+horizontal_alignment = 1
+
+[node name="LabelName" type="Label" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP1/VBox/Plate"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.93, 0.86, 1)
+theme_override_font_sizes/font_size = 11
+text = "EL CAPITÁN"
+horizontal_alignment = 1
+text_overrun_behavior = 3
+
+[node name="LabelStats" type="Label" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP1/VBox/Plate"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.7, 0.55, 0.9)
+theme_override_font_sizes/font_size = 9
+text = "DEF 92 · VEL 86"
+horizontal_alignment = 1
+
+[node name="CardP2" type="PanelContainer" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch"]
+custom_minimum_size = Vector2(130, 195)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -35.0
+offset_right = 110.0
+offset_bottom = 160.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP2"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="PhotoContainer" type="Control" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP2/VBox"]
+custom_minimum_size = Vector2(118, 120)
+layout_mode = 2
+
+[node name="Photo" type="TextureRect" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP2/VBox/PhotoContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TopBadges" type="HBoxContainer" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP2/VBox/PhotoContainer"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = 26.0
+grow_horizontal = 2
+
+[node name="LabelRole" type="Label" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP2/VBox/PhotoContainer/TopBadges"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.93, 0.86, 1)
+theme_override_font_sizes/font_size = 10
+theme_override_styles/normal = SubResource("StyleBoxFlat_badge_role")
+text = "MF"
+
+[node name="Spacer" type="Control" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP2/VBox/PhotoContainer/TopBadges"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LabelOVR" type="Label" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP2/VBox/PhotoContainer/TopBadges"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleBoxFlat_badge_ovr")
+text = "92"
+
+[node name="Plate" type="VBoxContainer" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP2/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="LabelSlot" type="Label" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP2/VBox/Plate"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.7, 0.55, 0.7)
+theme_override_font_sizes/font_size = 9
+text = "MEDIOCAMPO"
+horizontal_alignment = 1
+
+[node name="LabelName" type="Label" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP2/VBox/Plate"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.93, 0.86, 1)
+theme_override_font_sizes/font_size = 11
+text = "EL MAGO"
+horizontal_alignment = 1
+text_overrun_behavior = 3
+
+[node name="LabelStats" type="Label" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP2/VBox/Plate"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.7, 0.55, 0.9)
+theme_override_font_sizes/font_size = 9
+text = "CTR 95 · PAS 94"
+horizontal_alignment = 1
+
+[node name="CardP3" type="PanelContainer" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch"]
+custom_minimum_size = Vector2(130, 195)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 125.0
+offset_top = -125.0
+offset_right = 255.0
+offset_bottom = 70.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP3"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="PhotoContainer" type="Control" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP3/VBox"]
+custom_minimum_size = Vector2(118, 120)
+layout_mode = 2
+
+[node name="Photo" type="TextureRect" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP3/VBox/PhotoContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TopBadges" type="HBoxContainer" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP3/VBox/PhotoContainer"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = 26.0
+grow_horizontal = 2
+
+[node name="LabelRole" type="Label" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP3/VBox/PhotoContainer/TopBadges"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.93, 0.86, 1)
+theme_override_font_sizes/font_size = 10
+theme_override_styles/normal = SubResource("StyleBoxFlat_badge_role")
+text = "FW"
+
+[node name="Spacer" type="Control" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP3/VBox/PhotoContainer/TopBadges"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LabelOVR" type="Label" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP3/VBox/PhotoContainer/TopBadges"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleBoxFlat_badge_ovr")
+text = "93"
+
+[node name="Plate" type="VBoxContainer" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP3/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="LabelSlot" type="Label" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP3/VBox/Plate"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.7, 0.55, 0.7)
+theme_override_font_sizes/font_size = 9
+text = "DELANTERO"
+horizontal_alignment = 1
+
+[node name="LabelName" type="Label" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP3/VBox/Plate"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.93, 0.86, 1)
+theme_override_font_sizes/font_size = 11
+text = "EL FENÓMENO"
+horizontal_alignment = 1
+text_overrun_behavior = 3
+
+[node name="LabelStats" type="Label" parent="CanvasLayer/Root/ContentBox/PitchWrapper/TacticalPitch/CardP3/VBox/Plate"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.7, 0.55, 0.9)
+theme_override_font_sizes/font_size = 9
+text = "VEL 92 · TIR 94"
+horizontal_alignment = 1
+
+[node name="InfoPanel" type="PanelContainer" parent="CanvasLayer/Root/ContentBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_info")
+
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/Root/ContentBox/InfoPanel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="LabelTeamTitle" type="Label" parent="CanvasLayer/Root/ContentBox/InfoPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.93, 0.86, 1)
+theme_override_font_sizes/font_size = 20
+text = "SELECCIÓN VERDEAMARELA"
+autowrap_mode = 2
+
+[node name="LabelTeamLevel" type="Label" parent="CanvasLayer/Root/ContentBox/InfoPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+text = "NIVEL DE DIFICULTAD: 5 / 6"
+
+[node name="Sep1" type="HSeparator" parent="CanvasLayer/Root/ContentBox/InfoPanel/VBox"]
+layout_mode = 2
+
+[node name="LabelTeamDesc" type="Label" parent="CanvasLayer/Root/ContentBox/InfoPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.93, 0.86, 0.85)
+theme_override_font_sizes/font_size = 12
+text = "Fútbol arte, magia en el regate y máxima creatividad ofensiva para dominar cada partido con estilo."
+autowrap_mode = 2
+
+[node name="Sep2" type="HSeparator" parent="CanvasLayer/Root/ContentBox/InfoPanel/VBox"]
+layout_mode = 2
+
+[node name="LabelTeamStats" type="Label" parent="CanvasLayer/Root/ContentBox/InfoPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.7, 0.55, 1)
+theme_override_font_sizes/font_size = 11
+text = "PROMEDIO SQUAD:  CTRL 92  ·  VEL 89  ·  DEF 78"
+
+[node name="Spacer" type="Control" parent="CanvasLayer/Root/ContentBox/InfoPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MatchupBox" type="PanelContainer" parent="CanvasLayer/Root/ContentBox/InfoPanel/VBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_subbar")
+
+[node name="LabelMatchup" type="Label" parent="CanvasLayer/Root/ContentBox/InfoPanel/VBox/MatchupBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+text = "Rival Ronda 1: Los Desafiantes"
+horizontal_alignment = 1
+
+[node name="FooterBox" type="VBoxContainer" parent="CanvasLayer/Root"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ActionsBar" type="HBoxContainer" parent="CanvasLayer/Root/FooterBox"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 16
+
+[node name="BtnPlay" type="Button" parent="CanvasLayer/Root/FooterBox/ActionsBar"]
+custom_minimum_size = Vector2(230, 44)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_play")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_play")
+text = "JUGAR PARTIDO  ▶"
+
+[node name="BtnRandom" type="Button" parent="CanvasLayer/Root/FooterBox/ActionsBar"]
+custom_minimum_size = Vector2(190, 44)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.18, 0.06, 0.07, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_random")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_random")
+text = "AUTO-COMPLETAR  🎲"
+
+[node name="BtnPractice" type="Button" parent="CanvasLayer/Root/FooterBox/ActionsBar"]
+custom_minimum_size = Vector2(190, 44)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.93, 0.86, 0.9)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_prac")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_prac")
+text = "CANCHA DE PRUEBAS  ⚽"
+
+[node name="ControlsLegend" type="PanelContainer" parent="CanvasLayer/Root/FooterBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_subbar")
+
+[node name="LabelLegend" type="Label" parent="CanvasLayer/Root/FooterBox/ControlsLegend"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.7, 0.55, 0.8)
+theme_override_font_sizes/font_size = 11
+text = "P1 (TU EQUIPO):  WASD / Flechas: Mover  ·  Espacio / X: Pase / Tiro Cargado  ·  Z / Tab: Cambiar  ·  Shift: Sprint  ·  [ESC]: Menú"
+horizontal_alignment = 1
+

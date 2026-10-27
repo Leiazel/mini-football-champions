@@ -3,7 +3,7 @@
     "arg_01": {
       "id": "arg_01",
       "name": "El Diez",
-      "team": "team_arg",
+      "team": "team_argentina",
       "role": "FW",
       "stats": {
         "velocidad": 88,
@@ -20,7 +20,7 @@
     "arg_02": {
       "id": "arg_02",
       "name": "El Cósmico",
-      "team": "team_arg",
+      "team": "team_argentina",
       "role": "MF",
       "stats": {
         "velocidad": 86,
@@ -37,7 +37,7 @@
     "arg_03": {
       "id": "arg_03",
       "name": "El Cañonero",
-      "team": "team_arg",
+      "team": "team_argentina",
       "role": "FW",
       "stats": {
         "velocidad": 83,
@@ -54,14 +54,14 @@
     "arg_04": {
       "id": "arg_04",
       "name": "El Motor",
-      "team": "team_arg",
-      "role": "MF",
+      "team": "team_argentina",
+      "role": "DF",
       "stats": {
         "velocidad": 84,
         "control": 80,
-        "pase": 82,
-        "tiro": 76,
-        "defensa": 85
+        "pase": 84,
+        "tiro": 74,
+        "defensa": 88
       },
       "anims": "res://data/anims/arg_04.json",
       "sheet": "res://assets/sprites/arg_04_aligned.png",
@@ -71,14 +71,14 @@
     "bra_01": {
       "id": "bra_01",
       "name": "El Mago",
-      "team": "team_bra",
+      "team": "team_brasil",
       "role": "MF",
       "stats": {
         "velocidad": 87,
         "control": 95,
         "pase": 91,
         "tiro": 88,
-        "defensa": 40
+        "defensa": 45
       },
       "anims": "res://data/anims/bra_01.json",
       "sheet": "res://assets/sprites/bra_01_aligned.png",
@@ -88,7 +88,7 @@
     "bra_02": {
       "id": "bra_02",
       "name": "El Fenómeno",
-      "team": "team_bra",
+      "team": "team_brasil",
       "role": "FW",
       "stats": {
         "velocidad": 94,
@@ -105,14 +105,14 @@
     "bra_03": {
       "id": "bra_03",
       "name": "El Rayo",
-      "team": "team_bra",
-      "role": "FW",
+      "team": "team_brasil",
+      "role": "DF",
       "stats": {
         "velocidad": 90,
-        "control": 93,
+        "control": 88,
         "pase": 85,
-        "tiro": 86,
-        "defensa": 35
+        "tiro": 80,
+        "defensa": 82
       },
       "anims": "res://data/anims/bra_03.json",
       "sheet": "res://assets/sprites/bra_03_aligned.png",
@@ -122,12 +122,12 @@
     "bra_04": {
       "id": "bra_04",
       "name": "La Flecha Tropical",
-      "team": "team_bra",
+      "team": "team_desafiantes",
       "role": "FW",
       "stats": {
-        "velocidad": 93,
-        "control": 87,
-        "pase": 80,
+        "velocidad": 91,
+        "control": 85,
+        "pase": 78,
         "tiro": 84,
         "defensa": 42
       },
@@ -139,14 +139,14 @@
     "ita_01": {
       "id": "ita_01",
       "name": "El Maestro",
-      "team": "team_ita",
+      "team": "team_italia",
       "role": "MF",
       "stats": {
-        "velocidad": 72,
+        "velocidad": 76,
         "control": 93,
         "pase": 96,
         "tiro": 85,
-        "defensa": 65
+        "defensa": 70
       },
       "anims": "res://data/anims/ita_01.json",
       "sheet": "res://assets/sprites/ita_01_aligned.png",
@@ -156,14 +156,14 @@
     "ita_02": {
       "id": "ita_02",
       "name": "El Muro",
-      "team": "team_ita",
+      "team": "team_italia",
       "role": "DF",
       "stats": {
-        "velocidad": 80,
-        "control": 72,
-        "pase": 74,
-        "tiro": 55,
-        "defensa": 94
+        "velocidad": 82,
+        "control": 76,
+        "pase": 78,
+        "tiro": 58,
+        "defensa": 95
       },
       "anims": "res://data/anims/ita_02.json",
       "sheet": "res://assets/sprites/ita_02_aligned.png",
@@ -173,14 +173,14 @@
     "ita_03": {
       "id": "ita_03",
       "name": "La Coleta Mágica",
-      "team": "team_ita",
+      "team": "team_italia",
       "role": "FW",
       "stats": {
-        "velocidad": 84,
-        "control": 91,
+        "velocidad": 85,
+        "control": 92,
         "pase": 89,
-        "tiro": 89,
-        "defensa": 40
+        "tiro": 90,
+        "defensa": 42
       },
       "anims": "res://data/anims/ita_03.json",
       "sheet": "res://assets/sprites/ita_03_aligned.png",
@@ -190,12 +190,12 @@
     "star_01": {
       "id": "star_01",
       "name": "El Cíborg",
-      "team": "team_star",
+      "team": "team_estrellas",
       "role": "FW",
       "stats": {
         "velocidad": 91,
         "control": 82,
-        "pase": 70,
+        "pase": 74,
         "tiro": 95,
         "defensa": 48
       },
@@ -207,14 +207,14 @@
     "star_02": {
       "id": "star_02",
       "name": "El Relámpago",
-      "team": "team_star",
+      "team": "team_estrellas",
       "role": "FW",
       "stats": {
         "velocidad": 96,
         "control": 86,
         "pase": 81,
         "tiro": 90,
-        "defensa": 39
+        "defensa": 40
       },
       "anims": "res://data/anims/star_02.json",
       "sheet": "res://assets/sprites/star_02_aligned.png",
@@ -224,14 +224,14 @@
     "star_03": {
       "id": "star_03",
       "name": "El Comandante",
-      "team": "team_star",
-      "role": "FW",
+      "team": "team_estrellas",
+      "role": "MF",
       "stats": {
         "velocidad": 90,
         "control": 88,
-        "pase": 82,
+        "pase": 84,
         "tiro": 94,
-        "defensa": 44
+        "defensa": 52
       },
       "anims": "res://data/anims/star_03.json",
       "sheet": "res://assets/sprites/star_03_aligned.png",
@@ -241,14 +241,14 @@
     "star_04": {
       "id": "star_04",
       "name": "El Coloso",
-      "team": "team_star",
-      "role": "FW",
+      "team": "team_estrellas",
+      "role": "DF",
       "stats": {
         "velocidad": 82,
-        "control": 89,
+        "control": 86,
         "pase": 83,
-        "tiro": 92,
-        "defensa": 52
+        "tiro": 88,
+        "defensa": 85
       },
       "anims": "res://data/anims/star_04.json",
       "sheet": "res://assets/sprites/star_04_aligned.png",
@@ -258,10 +258,10 @@
     "vet_01": {
       "id": "vet_01",
       "name": "El Guante Dorado",
-      "team": "team_vet",
+      "team": "team_veteranos",
       "role": "MF",
       "stats": {
-        "velocidad": 78,
+        "velocidad": 80,
         "control": 87,
         "pase": 94,
         "tiro": 86,
@@ -275,14 +275,14 @@
     "vet_02": {
       "id": "vet_02",
       "name": "La Furia Rubia",
-      "team": "team_vet",
-      "role": "MF",
+      "team": "team_veteranos",
+      "role": "FW",
       "stats": {
         "velocidad": 86,
-        "control": 84,
+        "control": 85,
         "pase": 85,
-        "tiro": 88,
-        "defensa": 74
+        "tiro": 89,
+        "defensa": 64
       },
       "anims": "res://data/anims/vet_02.json",
       "sheet": "res://assets/sprites/vet_02_aligned.png",
@@ -292,14 +292,14 @@
     "vet_03": {
       "id": "vet_03",
       "name": "El Pitbull",
-      "team": "team_vet",
-      "role": "MF",
+      "team": "team_veteranos",
+      "role": "DF",
       "stats": {
         "velocidad": 85,
         "control": 81,
         "pase": 80,
         "tiro": 75,
-        "defensa": 90
+        "defensa": 91
       },
       "anims": "res://data/anims/vet_03.json",
       "sheet": "res://assets/sprites/vet_03_aligned.png",
@@ -309,14 +309,14 @@
     "leg_01": {
       "id": "leg_01",
       "name": "La Melena Dorada",
-      "team": "team_leg",
+      "team": "team_desafiantes",
       "role": "MF",
       "stats": {
-        "velocidad": 68,
+        "velocidad": 75,
         "control": 92,
         "pase": 92,
         "tiro": 74,
-        "defensa": 48
+        "defensa": 52
       },
       "anims": "res://data/anims/leg_01.json",
       "sheet": "res://assets/sprites/leg_01_aligned.png",
@@ -326,11 +326,11 @@
     "leg_02": {
       "id": "leg_02",
       "name": "El Gladiador",
-      "team": "team_leg",
+      "team": "team_desafiantes",
       "role": "DF",
       "stats": {
-        "velocidad": 81,
-        "control": 74,
+        "velocidad": 82,
+        "control": 75,
         "pase": 76,
         "tiro": 70,
         "defensa": 92
@@ -340,42 +340,113 @@
       "portrait": "res://assets/sprites/leg_02_portrait.png",
       "icon": "res://assets/sprites/leg_02_icon.png"
     },
-    "gk_01": {
-      "id": "gk_01",
-      "name": "El Guardián",
-      "team": "team_opp",
+    "gk_arg": {
+      "id": "gk_arg",
+      "name": "El Guardián Austral",
+      "team": "team_argentina",
+      "role": "GK",
+      "stats": {
+        "reflejos": 94,
+        "velocidad": 80,
+        "control": 78,
+        "pase": 82,
+        "tiro": 45,
+        "defensa": 95
+      },
+      "anims": "res://data/anims/gk_arg.json",
+      "sheet": "res://assets/sprites/gk_arg_aligned.png",
+      "portrait": "res://assets/sprites/gk_arg_portrait.png",
+      "icon": "res://assets/sprites/gk_arg_icon.png"
+    },
+    "gk_bra": {
+      "id": "gk_bra",
+      "name": "La Muralla Carioca",
+      "team": "team_brasil",
+      "role": "GK",
+      "stats": {
+        "reflejos": 91,
+        "velocidad": 79,
+        "control": 80,
+        "pase": 84,
+        "tiro": 42,
+        "defensa": 92
+      },
+      "anims": "res://data/anims/gk_bra.json",
+      "sheet": "res://assets/sprites/gk_bra_aligned.png",
+      "portrait": "res://assets/sprites/gk_bra_portrait.png",
+      "icon": "res://assets/sprites/gk_bra_icon.png"
+    },
+    "gk_ita": {
+      "id": "gk_ita",
+      "name": "Il Supremo",
+      "team": "team_italia",
+      "role": "GK",
+      "stats": {
+        "reflejos": 93,
+        "velocidad": 76,
+        "control": 77,
+        "pase": 78,
+        "tiro": 40,
+        "defensa": 94
+      },
+      "anims": "res://data/anims/gk_ita.json",
+      "sheet": "res://assets/sprites/gk_ita_aligned.png",
+      "portrait": "res://assets/sprites/gk_ita_portrait.png",
+      "icon": "res://assets/sprites/gk_ita_icon.png"
+    },
+    "gk_star": {
+      "id": "gk_star",
+      "name": "El Muro Europeo",
+      "team": "team_estrellas",
       "role": "GK",
       "stats": {
         "reflejos": 88,
-        "velocidad": 74,
-        "control": 72,
-        "pase": 70,
-        "tiro": 40,
-        "defensa": 92
+        "velocidad": 78,
+        "control": 76,
+        "pase": 79,
+        "tiro": 42,
+        "defensa": 89
       },
-      "anims": "res://data/anims/ita_02.json",
-      "sheet": "res://assets/sprites/ita_02_aligned.png",
-      "portrait": "res://assets/sprites/ita_02_portrait.png",
-      "icon": "res://assets/sprites/ita_02_icon.png"
+      "anims": "res://data/anims/gk_star.json",
+      "sheet": "res://assets/sprites/gk_star_aligned.png",
+      "portrait": "res://assets/sprites/gk_star_portrait.png",
+      "icon": "res://assets/sprites/gk_star_icon.png"
     },
-    "gk_02": {
-      "id": "gk_02",
-      "name": "El Pulpo",
-      "team": "team_user",
+    "gk_vet": {
+      "id": "gk_vet",
+      "name": "El Titán Bávaro",
+      "team": "team_veteranos",
       "role": "GK",
       "stats": {
-        "reflejos": 87,
-        "velocidad": 72,
-        "control": 70,
-        "pase": 68,
-        "tiro": 35,
+        "reflejos": 86,
+        "velocidad": 74,
+        "control": 72,
+        "pase": 74,
+        "tiro": 40,
         "defensa": 90
       },
-      "anims": "res://data/anims/vet_03.json",
-      "sheet": "res://assets/sprites/vet_03_aligned.png",
-      "portrait": "res://assets/sprites/vet_03_portrait.png",
-      "icon": "res://assets/sprites/vet_03_icon.png"
+      "anims": "res://data/anims/gk_vet.json",
+      "sheet": "res://assets/sprites/gk_vet_aligned.png",
+      "portrait": "res://assets/sprites/gk_vet_portrait.png",
+      "icon": "res://assets/sprites/gk_vet_icon.png"
+    },
+    "gk_leg": {
+      "id": "gk_leg",
+      "name": "El Escorpión",
+      "team": "team_desafiantes",
+      "role": "GK",
+      "stats": {
+        "reflejos": 82,
+        "velocidad": 84,
+        "control": 82,
+        "pase": 80,
+        "tiro": 55,
+        "defensa": 84
+      },
+      "anims": "res://data/anims/gk_leg.json",
+      "sheet": "res://assets/sprites/gk_leg_aligned.png",
+      "portrait": "res://assets/sprites/gk_leg_portrait.png",
+      "icon": "res://assets/sprites/gk_leg_icon.png"
     }
   }
 }
-

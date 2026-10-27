@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://ply000000001"]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_player"]
-[ext_resource type="Texture2D" uid="uid://plshad000001" path="res://assets/sprites/shadow.png" id="2_shadow"]
+[ext_resource type="Texture2D" path="res://assets/sprites/shadow.png" id="2_shadow"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_init"]
 animations = [{
@@ -11,27 +11,27 @@ animations = [{
 "speed": 6.0
 }]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_feet"]
-radius = 12.0
-height = 24.0
+[sub_resource type="CircleShape2D" id="CircleShape2D_feet"]
+radius = 11.0
 
 [node name="Player" type="CharacterBody2D" groups=["players"]]
 collision_layer = 1
-collision_mask = 3
+collision_mask = 4
 motion_mode = 1
+safe_margin = 0.05
 script = ExtResource("1_player")
 
 [node name="Shadow" type="Sprite2D" parent="."]
 position = Vector2(0, -2)
+scale = Vector2(0.78, 0.78)
 texture = ExtResource("2_shadow")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(0, -54)
+position = Vector2(0, -42)
+scale = Vector2(0.78, 0.78)
 sprite_frames = SubResource("SpriteFrames_init")
 animation = &"idle_down"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -4)
-rotation = 1.5708
-shape = SubResource("CapsuleShape2D_feet")
-
+position = Vector2(0, -3)
+shape = SubResource("CircleShape2D_feet")

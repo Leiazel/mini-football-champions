@@ -4,17 +4,19 @@ extends Node2D
 @onready var goal_left: Goal = $GoalLeft
 @onready var goal_right: Goal = $GoalRight
 
-# Nodos de arqueros (3v3)
+# Nodos de arqueros
 @onready var gk_left: Goalkeeper = $GoalkeeperLeft
 @onready var gk_right: Goalkeeper = $GoalkeeperRight
 
-# Jugadores de campo del usuario (2)
+# Jugadores de campo del usuario (3: DF, MF, FW)
 @onready var user_p1: Player = $UserPlayer1
 @onready var user_p2: Player = $UserPlayer2
+@onready var user_p3: Player = $UserPlayer3
 
-# Jugadores de campo rivales con IA (2)
+# Jugadores de campo rivales con IA (3: DF, MF, FW)
 @onready var rival_p1: Player = $RivalPlayer1
 @onready var rival_p2: Player = $RivalPlayer2
+@onready var rival_p3: Player = $RivalPlayer3
 
 # Pelota y cámara
 @onready var ball: Ball = $Ball
@@ -30,31 +32,36 @@ extends Node2D
 @onready var label_help: Label = $CanvasLayer/Panel/VBox/LabelHelp
 @onready var label_goal_banner: Label = $CanvasLayer/GoalBanner
 
-# Marcador y estadísticas de partido 3v3
 var score_user: int = 0
 var score_opp: int = 0
 var total_steals: int = 0
 var goal_celebration_timer: float = 0.0
 
-# Configuraciones de emparejamientos 3v3
+# Configuraciones de emparejamientos con los 6 equipos y sus arqueros únicos
 var matchups: Array[Dictionary] = [
 	{
 		"user_team_name": "Selección Verdeamarela",
-		"user_ids": ["bra_01", "bra_02"],
+		"user_ids": ["bra_03", "bra_01", "bra_02"],
+		"user_gk": "gk_bra",
 		"opp_team_name": "Estrellas Mundiales",
-		"opp_ids": ["star_01", "star_02"]
+		"opp_ids": ["star_04", "star_03", "star_01"],
+		"opp_gk": "gk_star"
 	},
 	{
 		"user_team_name": "Selección Celeste",
-		"user_ids": ["arg_01", "arg_03"],
+		"user_ids": ["arg_04", "arg_02", "arg_01"],
+		"user_gk": "gk_arg",
 		"opp_team_name": "Selección Azzurra",
-		"opp_ids": ["ita_01", "ita_02"]
+		"opp_ids": ["ita_02", "ita_01", "ita_03"],
+		"opp_gk": "gk_ita"
 	},
 	{
 		"user_team_name": "Clásicos Legendarios",
-		"user_ids": ["vet_01", "vet_02"],
-		"opp_team_name": "Desafiantes",
-		"opp_ids": ["leg_01", "leg_02"]
+		"user_ids": ["vet_03", "vet_01", "vet_02"],
+		"user_gk": "gk_vet",
+		"opp_team_name": "Los Desafiantes",
+		"opp_ids": ["leg_02", "leg_01", "bra_04"],
+		"opp_gk": "gk_leg"
 	}
 ]
 var current_matchup_index: int = 0
@@ -74,8 +81,7 @@ func _ready() -> void:
 	if is_instance_valid(gk_right):
 		gk_right.shot_saved.connect(_on_shot_saved)
 
-	# Conectar señales de robo en todos los jugadores
-	for p in [user_p1, user_p2, rival_p1, rival_p2]:
+	for p in [user_p1, user_p2, user_p3, rival_p1, rival_p2, rival_p3]:
 		if is_instance_valid(p):
 			p.ball_stolen.connect(_on_ball_stolen)
 
@@ -85,47 +91,74 @@ func _apply_matchup(idx: int) -> void:
 	current_matchup_index = idx % matchups.size()
 	var m = matchups[current_matchup_index]
 
-	# Equipo Usuario
+	# Equipo Usuario: [0]=DF, [1]=MF, [2]=FW
 	user_p1.load_player(m["user_ids"][0])
+	user_p1.role = "DF"
 	user_p1.team_id = "team_user"
 	user_p1.is_ai = false
-	user_p1.target_goal_x = 800.0
-	user_p1.set_user_controlled(true)
+	user_p1.target_goal_x = 1200.0
+	user_p1.set_user_controlled(false)
 
 	user_p2.load_player(m["user_ids"][1])
+	user_p2.role = "MF"
 	user_p2.team_id = "team_user"
 	user_p2.is_ai = false
-	user_p2.target_goal_x = 800.0
-	user_p2.set_user_controlled(false)
-	user_p2.tactical_offset = Vector2(140, -80)
+	user_p2.target_goal_x = 1200.0
+	user_p2.set_user_controlled(true)
 
-	# Equipo Rival (IA)
+	user_p3.load_player(m["user_ids"][2])
+	user_p3.role = "FW"
+	user_p3.team_id = "team_user"
+	user_p3.is_ai = false
+	user_p3.target_goal_x = 1200.0
+	user_p3.set_user_controlled(false)
+
+	gk_left.load_goalkeeper(m["user_gk"])
+	gk_left.team_id = "team_user"
+
+	# Equipo Rival (IA): [0]=DF, [1]=MF, [2]=FW
 	rival_p1.load_player(m["opp_ids"][0])
+	rival_p1.role = "DF"
 	rival_p1.team_id = "team_opp"
 	rival_p1.is_ai = true
-	rival_p1.target_goal_x = -800.0
+	rival_p1.target_goal_x = -1200.0
 	rival_p1.set_user_controlled(false)
 
 	rival_p2.load_player(m["opp_ids"][1])
+	rival_p2.role = "MF"
 	rival_p2.team_id = "team_opp"
 	rival_p2.is_ai = true
-	rival_p2.target_goal_x = -800.0
+	rival_p2.target_goal_x = -1200.0
 	rival_p2.set_user_controlled(false)
-	rival_p2.tactical_offset = Vector2(-140, 80)
+
+	rival_p3.load_player(m["opp_ids"][2])
+	rival_p3.role = "FW"
+	rival_p3.team_id = "team_opp"
+	rival_p3.is_ai = true
+	rival_p3.target_goal_x = -1200.0
+	rival_p3.set_user_controlled(false)
+
+	gk_right.load_goalkeeper(m["opp_gk"])
+	gk_right.team_id = "team_opp"
 
 	_reset_formation()
 	_update_hud()
 
 func _reset_formation() -> void:
-	user_p1.position = Vector2(-140, 0)
-	user_p2.position = Vector2(-220, -90)
-	rival_p1.position = Vector2(140, 20)
-	rival_p2.position = Vector2(220, -70)
+	user_p1.set_home_position(Vector2(-620, 40))
+	user_p2.set_home_position(Vector2(-240, -140))
+	user_p3.set_home_position(Vector2(380, 120))
+	user_p3.global_position = Vector2(-110, 80)
+
+	rival_p1.set_home_position(Vector2(620, -40))
+	rival_p2.set_home_position(Vector2(240, 140))
+	rival_p3.set_home_position(Vector2(-380, -120))
+	rival_p3.global_position = Vector2(140, -80)
 
 	if is_instance_valid(gk_left):
-		gk_left.position = Vector2(-720, 0)
+		gk_left.position = Vector2(-1140, 0)
 	if is_instance_valid(gk_right):
-		gk_right.position = Vector2(720, 0)
+		gk_right.position = Vector2(1140, 0)
 
 	ball.position = Vector2(0, 0)
 	ball.set_libre(Vector2.ZERO)
@@ -142,28 +175,35 @@ func _process(delta: float) -> void:
 	else:
 		label_goal_banner.visible = false
 
-	# Cámara suave
+	# Cámara suave con límites
+	var cam_target := Vector2.ZERO
 	if is_instance_valid(ball) and ball.current_state == Ball.State.EN_VUELO:
-		camera.position = camera.position.lerp(ball.position, 0.12)
+		cam_target = ball.position
+	elif is_instance_valid(active_p) and is_instance_valid(ball):
+		cam_target = active_p.position.lerp(ball.position, 0.35)
 	elif is_instance_valid(active_p):
-		camera.position = camera.position.lerp(active_p.position, 0.14)
+		cam_target = active_p.position
 
-	# Tecla Tab: cambiar enfrentamiento
+	cam_target.x = clampf(cam_target.x, -560.0, 560.0)
+	cam_target.y = clampf(cam_target.y, -320.0, 320.0)
+	camera.position = camera.position.lerp(cam_target, 0.14)
+
 	if Input.is_action_just_pressed("next_character"):
 		_apply_matchup(current_matchup_index + 1)
 
-	# Tecla R: reiniciar formación
 	if Input.is_key_pressed(KEY_R):
 		_reset_formation()
+
+	if Input.is_key_pressed(KEY_ESCAPE):
+		get_tree().change_scene_to_file("res://scenes/menu/TeamSelectMenu.tscn")
 
 	_update_hud()
 
 func get_active_user_player() -> Player:
-	if is_instance_valid(user_p1) and user_p1.is_user_controlled:
-		return user_p1
-	if is_instance_valid(user_p2) and user_p2.is_user_controlled:
-		return user_p2
-	return user_p1
+	for p in [user_p1, user_p2, user_p3]:
+		if is_instance_valid(p) and p.is_user_controlled:
+			return p
+	return user_p2
 
 func _on_goal_right_scored(_g_name: String) -> void:
 	score_user += 1
@@ -218,15 +258,15 @@ func _update_hud() -> void:
 		var tiro = active_p.stats.get("tiro", 0)
 		var pase = active_p.stats.get("pase", 0)
 
-		label_player.text = "Controlando: %s (%s) [%s]" % [active_p.player_name, active_p.player_id, active_p.role]
+		label_player.text = "Controlando: %s (%s) [Rol: %s]" % [active_p.player_name, active_p.player_id, active_p.role]
 		label_stats.text = "CTRL: %d | DEF: %d | VEL: %d | TIRO: %d | PASE: %d" % [ctrl, def_stat, vel, tiro, pase]
 
 		if active_p.has_ball:
 			if is_instance_valid(active_p.current_pass_target):
-				label_status.text = "Pase: Compañero Enfocado (%s) [Toque X]" % active_p.current_pass_target.player_name
+				label_status.text = "Pase: Compañero Enfocado (%s) [Toque X/Espacio]" % active_p.current_pass_target.player_name
 				label_status.modulate = Color(1.0, 0.9, 0.2)
 			else:
-				label_status.text = "Conducción: Mantener [X] para Tiro al arco"
+				label_status.text = "Conducción: Mantener [X/Espacio] para Tiro al arco"
 				label_status.modulate = Color(0.3, 0.9, 0.5)
 		else:
 			if not label_status.text.contains("ROBO"):
@@ -245,4 +285,4 @@ func _update_hud() -> void:
 				state_str = "EN VUELO (vel: %.0f px/s)" % ball.velocity.length()
 		label_ball.text = "Pelota: %s" % state_str
 
-	label_help.text = "[Flechas/WASD] Mover | [Toque Corto X] Pase | [Mantener X] Tiro | [Z] Cambiar Jugador | [Tab] Cambiar Equipos | [R] Reiniciar"
+	label_help.text = "[Flechas/WASD] Mover | [Toque X/Espacio] Pase | [Mantener X/Espacio] Tiro | [Z/Q] Cambiar | [Tab] Equipos | [R] Reiniciar"

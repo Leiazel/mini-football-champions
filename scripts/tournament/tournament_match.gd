@@ -8,16 +8,18 @@ extends Node2D
 
 @onready var user_p1: Player = $UserPlayer1
 @onready var user_p2: Player = $UserPlayer2
+@onready var user_p3: Player = $UserPlayer3
 @onready var rival_p1: Player = $RivalPlayer1
 @onready var rival_p2: Player = $RivalPlayer2
+@onready var rival_p3: Player = $RivalPlayer3
 
 @onready var ball: Ball = $Ball
 @onready var camera: Camera2D = $Camera2D
 
 # HUD e interfaz de torneo
 @onready var label_round: Label = $CanvasLayer/Panel/VBox/LabelRound
-@onready var label_score: Label = $CanvasLayer/Panel/VBox/LabelScore
-@onready var label_clock: Label = $CanvasLayer/Panel/VBox/LabelClock
+@onready var label_score: Label = $CanvasLayer/Panel/VBox/HBoxScore/LabelScore
+@onready var label_clock: Label = $CanvasLayer/Panel/VBox/HBoxScore/LabelClock
 @onready var label_player: Label = $CanvasLayer/Panel/VBox/LabelPlayer
 @onready var label_stats: Label = $CanvasLayer/Panel/VBox/LabelStats
 @onready var label_status: Label = $CanvasLayer/Panel/VBox/LabelStatus
@@ -52,52 +54,75 @@ func _ready() -> void:
 	gk_left.shot_saved.connect(_on_shot_saved)
 	gk_right.shot_saved.connect(_on_shot_saved)
 
-	for p in [user_p1, user_p2, rival_p1, rival_p2]:
+	for p in [user_p1, user_p2, user_p3, rival_p1, rival_p2, rival_p3]:
 		if is_instance_valid(p):
 			p.ball_stolen.connect(_on_ball_stolen)
 
-	# Iniciar la primera ronda del torneo
 	manager.start_round(0)
 
 func _on_round_started(round_data: Dictionary, user_team: Dictionary, opp_team: Dictionary) -> void:
 	modal_panel.visible = false
 	current_opp_team_id = opp_team.get("id", "")
 
-	# Cargar titulares del usuario
-	var u_forms = user_team.get("formation", ["bra_01", "bra_02"])
-	user_p1.load_player(u_forms[0])
+	# Cargar titulares del usuario: [0]=DF, [1]=MF, [2]=FW
+	var u_forms = user_team.get("formation", ["bra_03", "bra_01", "bra_02"])
+	var u_df = u_forms[0] if u_forms.size() > 0 else "bra_03"
+	var u_mf = u_forms[1] if u_forms.size() > 1 else u_df
+	var u_fw = u_forms[2] if u_forms.size() > 2 else u_mf
+
+	user_p1.load_player(u_df)
+	user_p1.role = "DF"
 	user_p1.team_id = "team_user"
 	user_p1.is_ai = false
-	user_p1.target_goal_x = 800.0
-	user_p1.set_user_controlled(true)
+	user_p1.target_goal_x = 1200.0
+	user_p1.set_user_controlled(false)
 
-	user_p2.load_player(u_forms[1] if u_forms.size() > 1 else u_forms[0])
+	user_p2.load_player(u_mf)
+	user_p2.role = "MF"
 	user_p2.team_id = "team_user"
 	user_p2.is_ai = false
-	user_p2.target_goal_x = 800.0
-	user_p2.set_user_controlled(false)
-	user_p2.tactical_offset = Vector2(140, -80)
+	user_p2.target_goal_x = 1200.0
+	user_p2.set_user_controlled(true)
 
-	var u_gk = user_team.get("gk_id", "gk_02")
+	user_p3.load_player(u_fw)
+	user_p3.role = "FW"
+	user_p3.team_id = "team_user"
+	user_p3.is_ai = false
+	user_p3.target_goal_x = 1200.0
+	user_p3.set_user_controlled(false)
+
+	var u_gk = user_team.get("gk_id", "gk_bra")
 	gk_left.load_goalkeeper(u_gk)
 	gk_left.team_id = "team_user"
 
-	# Cargar rivales según datos de la ronda
-	var o_forms = opp_team.get("formation", ["star_01", "star_02"])
-	rival_p1.load_player(o_forms[0])
+	# Cargar titulares rivales: [0]=DF, [1]=MF, [2]=FW
+	var o_forms = opp_team.get("formation", ["leg_02", "leg_01", "bra_04"])
+	var o_df = o_forms[0] if o_forms.size() > 0 else "leg_02"
+	var o_mf = o_forms[1] if o_forms.size() > 1 else o_df
+	var o_fw = o_forms[2] if o_forms.size() > 2 else o_mf
+
+	rival_p1.load_player(o_df)
+	rival_p1.role = "DF"
 	rival_p1.team_id = "team_opp"
 	rival_p1.is_ai = true
-	rival_p1.target_goal_x = -800.0
+	rival_p1.target_goal_x = -1200.0
 	rival_p1.set_user_controlled(false)
 
-	rival_p2.load_player(o_forms[1] if o_forms.size() > 1 else o_forms[0])
+	rival_p2.load_player(o_mf)
+	rival_p2.role = "MF"
 	rival_p2.team_id = "team_opp"
 	rival_p2.is_ai = true
-	rival_p2.target_goal_x = -800.0
+	rival_p2.target_goal_x = -1200.0
 	rival_p2.set_user_controlled(false)
-	rival_p2.tactical_offset = Vector2(-140, 80)
 
-	var o_gk = opp_team.get("gk_id", "gk_01")
+	rival_p3.load_player(o_fw)
+	rival_p3.role = "FW"
+	rival_p3.team_id = "team_opp"
+	rival_p3.is_ai = true
+	rival_p3.target_goal_x = -1200.0
+	rival_p3.set_user_controlled(false)
+
+	var o_gk = opp_team.get("gk_id", "gk_leg")
 	gk_right.load_goalkeeper(o_gk)
 	gk_right.team_id = "team_opp"
 
@@ -110,13 +135,19 @@ func _on_round_started(round_data: Dictionary, user_team: Dictionary, opp_team: 
 	_update_hud()
 
 func _reset_pitch_formation() -> void:
-	user_p1.position = Vector2(-150, 0)
-	user_p2.position = Vector2(-230, -85)
-	rival_p1.position = Vector2(150, 20)
-	rival_p2.position = Vector2(230, -75)
+	# Posiciones tácticas base (home_position) y posiciones de saque
+	user_p1.set_home_position(Vector2(-620, 40))   # Defensor atrás
+	user_p2.set_home_position(Vector2(-240, -140)) # Mediocampista
+	user_p3.set_home_position(Vector2(380, 120))   # Delantero arriba esperando la pelota
+	user_p3.global_position = Vector2(-110, 80)    # Arranca en propio campo en el saque
 
-	gk_left.position = Vector2(-720, 0)
-	gk_right.position = Vector2(720, 0)
+	rival_p1.set_home_position(Vector2(620, -40))  # Defensor rival atrás
+	rival_p2.set_home_position(Vector2(240, 140))  # Mediocampista rival
+	rival_p3.set_home_position(Vector2(-380, -120))# Delantero rival arriba
+	rival_p3.global_position = Vector2(140, -80)   # Arranca en su campo en el saque
+
+	gk_left.position = Vector2(-1140, 0)
+	gk_right.position = Vector2(1140, 0)
 
 	ball.position = Vector2(0, 0)
 	ball.set_libre(Vector2.ZERO)
@@ -138,29 +169,39 @@ func _process(delta: float) -> void:
 	if modal_panel.visible:
 		if Input.is_action_just_pressed("action_pass") or Input.is_key_pressed(KEY_SPACE):
 			if manager.is_champion:
-				manager.start_round(0) # Reiniciar torneo
+				manager.start_round(0)
 			elif manager.user_score > manager.opp_score:
 				manager.next_round()
 			else:
 				manager.restart_current_round()
 		elif Input.is_key_pressed(KEY_R):
 			manager.restart_current_round()
+		elif Input.is_key_pressed(KEY_ESCAPE):
+			get_tree().change_scene_to_file("res://scenes/menu/TeamSelectMenu.tscn")
+	elif Input.is_key_pressed(KEY_ESCAPE):
+		get_tree().change_scene_to_file("res://scenes/menu/TeamSelectMenu.tscn")
 
-	# Cámara suave
+	# Cámara suave con límites de estadio
 	var active_p = get_active_user_player()
+	var cam_target := Vector2.ZERO
 	if is_instance_valid(ball) and ball.current_state == Ball.State.EN_VUELO:
-		camera.position = camera.position.lerp(ball.position, 0.12)
+		cam_target = ball.position
+	elif is_instance_valid(active_p) and is_instance_valid(ball):
+		cam_target = active_p.position.lerp(ball.position, 0.35)
 	elif is_instance_valid(active_p):
-		camera.position = camera.position.lerp(active_p.position, 0.15)
+		cam_target = active_p.position
+
+	cam_target.x = clampf(cam_target.x, -560.0, 560.0)
+	cam_target.y = clampf(cam_target.y, -320.0, 320.0)
+	camera.position = camera.position.lerp(cam_target, 0.14)
 
 	_update_hud()
 
 func get_active_user_player() -> Player:
-	if is_instance_valid(user_p1) and user_p1.is_user_controlled:
-		return user_p1
-	if is_instance_valid(user_p2) and user_p2.is_user_controlled:
-		return user_p2
-	return user_p1
+	for p in [user_p1, user_p2, user_p3]:
+		if is_instance_valid(p) and p.is_user_controlled:
+			return p
+	return user_p2
 
 func _on_goal_right_scored(_g_name: String) -> void:
 	if not manager.is_active:
@@ -202,17 +243,17 @@ func _on_match_ended(user_won: bool, is_champ: bool) -> void:
 		modal_title.text = "¡¡¡ CAMPEÓN CONTINENTAL !!! 🏆"
 		modal_title.modulate = Color(1.0, 0.88, 0.2)
 		modal_msg.text = "¡Derrotaste a la legendaria Selección Celeste en la gran final!\nTu equipo se consagra en lo más alto del torneo."
-		modal_btn_prompt.text = "[Presioná ESPACIO para jugar otro Torneo]"
+		modal_btn_prompt.text = "[ESPACIO: Nuevo Torneo | ESC: Menú de Equipos]"
 	elif user_won:
 		modal_title.text = "¡VICTORIA Y CLASIFICACIÓN! ⚽"
 		modal_title.modulate = Color(0.2, 1.0, 0.4)
 		modal_msg.text = "Superaste la fase: %s.\nPrepárate para enfrentar al siguiente rival de mayor dificultad." % round_info.get("name", "")
-		modal_btn_prompt.text = "[Presioná ESPACIO para avanzar a la Siguiente Ronda]"
+		modal_btn_prompt.text = "[ESPACIO: Siguiente Ronda | ESC: Menú de Equipos]"
 	else:
 		modal_title.text = "ELIMINADO DEL TORNEO ❌"
 		modal_title.modulate = Color(1.0, 0.3, 0.3)
 		modal_msg.text = "Has sido superado por %s.\nRefina tus pases, tiros y defensa para volver a intentarlo." % manager.get_team(current_opp_team_id).get("name", "el rival")
-		modal_btn_prompt.text = "[Presioná ESPACIO o R para Reintentar esta Ronda]"
+		modal_btn_prompt.text = "[ESPACIO / R: Reintentar | ESC: Menú de Equipos]"
 
 func _on_ball_state_changed(_s: Ball.State) -> void:
 	_update_hud()
@@ -236,7 +277,7 @@ func _update_hud() -> void:
 		var tiro = active_p.stats.get("tiro", 0)
 		var pase = active_p.stats.get("pase", 0)
 
-		label_player.text = "Controlando: %s (%s) [%s]" % [active_p.player_name, active_p.player_id, active_p.role]
+		label_player.text = "Controlando: %s (%s) [Rol: %s]" % [active_p.player_name, active_p.player_id, active_p.role]
 		label_stats.text = "CTRL: %d | DEF: %d | VEL: %d | TIRO: %d | PASE: %d" % [ctrl, def_stat, vel, tiro, pase]
 
 	if is_instance_valid(ball):
@@ -251,5 +292,4 @@ func _update_hud() -> void:
 				state_str = "EN VUELO (vel: %.0f px/s)" % ball.velocity.length()
 		label_ball.text = "Pelota: %s" % state_str
 
-	label_help.text = "[Flechas/WASD] Mover | [Toque X] Pase Dirigido | [Mantener X] Tiro Potente | [Z] Cambiar Jugador"
-
+	label_help.text = "[Flechas/WASD] Mover | [Toque X/Espacio] Pase Dirigido | [Mantener X/Espacio] Tiro | [Z/Q] Cambiar Jugador"

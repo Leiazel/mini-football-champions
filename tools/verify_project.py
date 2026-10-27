@@ -59,28 +59,41 @@ def test_project():
         players_data = json.load(f)
 
     players = players_data.get("players", {})
-    if len(players) < 22:
-        errors.append(f"Se esperaban al menos 22 jugadores en players.json, encontrados: {len(players)}")
+    if len(players) < 26:
+        errors.append(f"Se esperaban al menos 26 jugadores en players.json, encontrados: {len(players)}")
     else:
-        print(f"  [OK] {len(players)} jugadores registrados en players.json (incluyendo arqueros gk_01 y gk_02)")
+        print(f"  [OK] {len(players)} jugadores registrados en players.json (20 de campo + 6 arqueros únicos)")
 
+    gk_sheets = set()
+    field_sheets = set()
     for pid, p in players.items():
         role = p.get("role", "FW")
         st = p.get("stats", {})
+        sheet_path = p.get("sheet", "")
         if role == "GK":
             if "reflejos" not in st or not (1 <= st["reflejos"] <= 100):
                 errors.append(f"Arquero {pid} falta o stat 'reflejos' inválido: {st.get('reflejos')}")
+            if sheet_path in gk_sheets:
+                errors.append(f"Arquero {pid} reutiliza spritesheet de otro arquero: {sheet_path}")
+            gk_sheets.add(sheet_path)
         else:
             for req in ["velocidad", "control", "pase", "tiro", "defensa"]:
                 val = st.get(req)
                 if val is None or not (1 <= val <= 100):
                     errors.append(f"Jugador {pid} stat '{req}' inválido: {val}")
+            field_sheets.add(sheet_path)
 
-        for res_key in ["anims", "sheet"]:
+        for res_key in ["anims", "sheet", "portrait", "icon"]:
             res_path = p.get(res_key, "")
             local_path = res_path.replace("res://", "")
             if not os.path.exists(local_path):
                 errors.append(f"Jugador {pid} recurso {res_key} no existe: {local_path}")
+
+    overlap_sheets = gk_sheets.intersection(field_sheets)
+    if overlap_sheets:
+        errors.append(f"Arqueros reutilizan spritesheets de jugadores de campo: {overlap_sheets}")
+    else:
+        print(f"  [OK] 6 arqueros únicos verificados con 0 reutilización de spritesheets.")
 
     print(f"  [OK] Todos los stats y rutas de recursos verificadas.")
 
@@ -106,9 +119,9 @@ def test_project():
     print(f"  [OK] Verificadas las 11 animaciones requeridas.")
 
     print("\n--- 4. Verificando lógica de Hito 1 (Conducción y control) ---")
-    for ctrl, expected_dist in [(0, 34.0), (50, 25.5), (100, 17.0)]:
+    for ctrl, expected_dist in [(0, 28.0), (50, 23.0), (100, 18.0)]:
         t = ctrl / 100.0
-        dist = 34.0 * (1.0 - t) + 17.0 * t
+        dist = 28.0 * (1.0 - t) + 18.0 * t
         assert abs(dist - expected_dist) < 1e-4
     print(f"  [OK] Fórmula de control validada.")
 
@@ -129,9 +142,9 @@ def test_project():
         if shooter_id not in players:
             continue
         t_stat = players[shooter_id]["stats"].get("tiro", 50)
-        base_kick = 540.0 * (1.0 - t_stat/100.0) + 880.0 * (t_stat/100.0)
-        max_shot = base_kick * (0.8 + 0.35 * 1.0)
-        assert max_shot > 800.0
+        base_kick = 640.0 * (1.0 - t_stat/100.0) + 1020.0 * (t_stat/100.0)
+        max_shot = base_kick * (0.85 + 0.35 * 1.0)
+        assert max_shot > 900.0
     print(f"  [OK] Fórmulas de tiro potente verificadas.")
 
     print("\n--- 7. Verificando lógica de Hito 4 (Robo de balón e IA 3v3) ---")
@@ -183,11 +196,16 @@ def test_project():
     else:
         print(f"  [OK] Jefe Final confirmado: {final_round['name']} vs Selección Celeste (Nivel 6).")
 
-    print("\n--- 9. Verificando escena TournamentMatch ---")
+    print("\n--- 9. Verificando escena TournamentMatch (4v4) ---")
     with open("scenes/tournament/TournamentMatch.tscn", "r", encoding="utf-8") as f:
         tourn_scene_content = f.read()
 
-    for node in ["GoalLeft", "GoalRight", "GoalkeeperLeft", "GoalkeeperRight", "UserPlayer1", "UserPlayer2", "RivalPlayer1", "RivalPlayer2", "Ball", "ModalPanel"]:
+    for node in [
+        "GoalLeft", "GoalRight", "GoalkeeperLeft", "GoalkeeperRight",
+        "UserPlayer1", "UserPlayer2", "UserPlayer3",
+        "RivalPlayer1", "RivalPlayer2", "RivalPlayer3",
+        "Ball", "ModalPanel"
+    ]:
         if f'node name="{node}"' not in tourn_scene_content:
             errors.append(f"Falta el nodo {node} en TournamentMatch.tscn")
         else:
